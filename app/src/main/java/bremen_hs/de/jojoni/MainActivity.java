@@ -2,9 +2,12 @@ package bremen_hs.de.jojoni;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-//Hallo chier is da Chief yo
+import android.view.View;
+import android.widget.Button;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -13,6 +16,34 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Der Regeln anzeigen Button wird mit der Funktion verknüpft
+        Button buttonShowRules = (Button) findViewById(R.id.btnShowRules);
+        buttonShowRules.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Test", "Show Rules gedrückt");
+            }
+        });
+
+        // Der Spiel Erstellen Button wird mit der Funktion verknüpft
+        Button buttonCreateGame = (Button) findViewById(R.id.btnCreateGame);
+        buttonCreateGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Funktion
+            }
+        });
+
+        // Der Spiel Beitreten Button wird mit der Funktion verknüpft
+        Button buttonJoinGame = (Button) findViewById(R.id.btnJoinGame);
+        buttonJoinGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Funktion
+            }
+        });
+
     }
 //Test Commit & Push
 

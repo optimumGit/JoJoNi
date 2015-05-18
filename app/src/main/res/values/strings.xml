@@ -4,5 +4,8 @@
     <string name="app_name">JoJoNi</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="btnCreateGame">Spiel erstellen</string>
+    <string name="btnJoinGame">Spiel beitreten</string>
+    <string name="btnShowRules">Regeln anzeigen</string>
 
 </resources>
