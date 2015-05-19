@@ -1,0 +1,53 @@
+KARTENSPIEL SEKA.
+
+-Am Tisch sitzen 4 Spieler (Vorerst.. möglich sind max. 12 Spieler. Bevorzugt 4-8 Spieler)
+
+-Es gibt einen Pot wo das Geld reinkommt.
+
+-Es gibt einen Dealer (Karten werden von der Bank verteilt)
+
+-Bevor die Karten verteilt werden muss jeder Spieler ein Start Einsatz setzen.
+
+-Jeder Spieler bekommt drei Karten.
+-Nach dem alle Spieler die Karten bekommen haben, darf der erste Spieler nach dem Dealer „Raisen“ oder „Pass“-en. Erhöht wird mit, mindestens, in  Höhe des Startbetrages, nach oben hin ist „no limit“.
+Wenn ein Spieler eine Summe setzt ,muss mindestens die gleiche Summe vom nächsten Spieler gesetzt werden, die Summe kann von nächsten Spieler auch erhöht werden.
+
+KARTENKOMBINATIONEN:
+
+
+Kartensymbole: Pik = &; Herz = *; Karo = #; Kreuz = +
+
+Kartenwertung: 6 = 6; 7=7; 8=8; 9=9; 10=10; bube=10; dame=10; koenig=10; as=11 gilt für alle Kartensymbole.
+
+Wenn die Karten das gleiche Symbol haben können sie zusammen addiert werden:
+
+Hand[+10;*6;&king] = *10 punkte. Hier wird die höchste Karte gezählt, 10 oder der König.
+
+Hand[+10;&6;&king] = &16 punkte. Zwei Piks können addiert werden.
+
+Hand[+10;+6;+king] = +26 punkte. Drei Kreuze können addiert werden. 26 ist schon eine starke Hand.
+
+As:
+
+Hand[+as;#6;&king]  = 11 punkte. Ein As zählt als 11 punkte.
+
+Hand[+as;#as;&king] = 22 punkte. Zwei As können addiert werden, aber auch nur As. zwei Könige zb darf man nicht zusammen addieren.
+
+Hand[+as;#as;&as]   = 33 punkte. Die zweit stärkste Hand im Spiel.
+
+Drei gleiche Karten:
+
+Hand[+6;#6;*6]           = 33,5 punkte. Somit die stärkste Hand im Spiel.
+
+Hand[+as;#as;&as]       = 33   punkte. Die zweit stärkste Hand im Spiel.
+
+Hand[+bube;#bube;&bube] = 30,5 punkte. Alle anderen Kartenkombinationen mit drei gleicher Karten sind gleichwertig und zwar 30,5 punkte.
+
+7 Pik ist der Joke des Spiels. Der Spiele kann sich eine beliebige Karte auswählen, sogar eine karte die er schon auf der Hand hat.
+Hand[+as;&7;+5]  = der Spieler wählt noch ein As Kreuz aus.
+Hand[+as;+as;+5] = 27 Punkte
+
+Der Spieler mit der höchsten Punkteanzahl gewinnt.
+Bei einem Punktegleichstand gibt es Seka(Stechen), folgendes passiert.
+Der Pot wird eingefroren, die Spieler die raus sind, können sich in das Stechen einkaufen. Die Preise variieren,  haben 2 Spieler Seka wird sich mit ½ Pot eingekauft, sind es 3 Spieler die Seka haben wird sich mit 1/3 eingekauft.
+Nach dem Einkaufen wird zwischen den Spieler die Stechen haben der Dealer ermittelt, der Sieger ist der die größte Karte gezogen hat, dann werden die Karten verteilt und das Spiel läuft normal weiter.
