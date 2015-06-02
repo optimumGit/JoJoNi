@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" filepath="$PROJECT_DIR$/BaseGameUtils/BaseGameUtils.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Seka.iml" filepath="$PROJECT_DIR$/Seka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JoJoNiGooglePlay.iml" filepath="$PROJECT_DIR$/JoJoNiGooglePlay.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
