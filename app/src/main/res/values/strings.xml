@@ -7,5 +7,6 @@
     <string name="btnCreateGame">Spiel erstellen</string>
     <string name="btnJoinGame">Spiel beitreten</string>
     <string name="btnShowRules">Regeln anzeigen</string>
+    <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
 
 </resources>

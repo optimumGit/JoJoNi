@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
@@ -23,6 +24,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.android.gms.plus.Plus;
+import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
 
@@ -32,6 +34,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     private static final String TAG = "SekaCardGame";
     private static final int RC_SELECT_PLAYERS = 10000;
+    private static final int RC_SIGN_IN = 9001;
+    private boolean mResolvingConnectionFailure = false;
+    private boolean mAutoStartSignInFlow = true;
 
     private GoogleApiClient apiClient;
 
@@ -184,7 +189,22 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d(TAG, "Connection failed");
+
+        Log.d(TAG, "Connection failed" + GooglePlayServicesUtil.getErrorString(connectionResult.getErrorCode()));
+        Log.d(TAG, "onConnectionFailed(): attempting to resolve");
+        if (mResolvingConnectionFailure) {
+            // Already resolving
+            Log.d(TAG, "onConnectionFailed(): ignoring connection failure, already resolving.");
+            return;
+        }
+
+        // Launch the sign-in flow if the button was clicked or if auto sign-in is enabled
+        if (mAutoStartSignInFlow) {
+            mAutoStartSignInFlow = false;
+            mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this,
+                    apiClient, connectionResult, RC_SIGN_IN,
+                    getString(R.string.signin_other_error));
+        }
     }
 
     @Override
