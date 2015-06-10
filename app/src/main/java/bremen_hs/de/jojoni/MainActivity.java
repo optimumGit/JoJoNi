@@ -116,7 +116,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     @Override
     public void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
-
+        if( request == SIGN_IN_REQUEST){
+            apiClient.connect();
+        }
         if (request == INVITE_PLAYERS_REQUEST) {
             if (response != Activity.RESULT_OK) {
                 // user canceled
