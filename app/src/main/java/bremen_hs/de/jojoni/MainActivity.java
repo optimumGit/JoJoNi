@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -33,10 +32,13 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "SekaCardGame";
-    private static final int RC_SELECT_PLAYERS = 10000;
-    private static final int RC_SIGN_IN = 9001;
+    private static final int INVITE_PLAYERS_REQUEST = 10000;
+    private static final int SIGN_IN_REQUEST = 9001;
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
+    private TurnBasedMatch currentMatch;
+    private TurnData turnData;
+
 
     private GoogleApiClient apiClient;
 
@@ -101,20 +103,21 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
 
+    // Instantiate a new TurnBasedMatch - Getting to the Lobby
     private void onStartMatchClicked() {
-        // Select between 1 and 3 players (not including the current one, so the game has 2-4 total)
         int minPlayers = 1;
         int maxPlayers = 8;
         Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(apiClient,
                 minPlayers, maxPlayers, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
+        startActivityForResult(intent, INVITE_PLAYERS_REQUEST);
     }
 
+    // Handle the ActivityRequests
     @Override
     public void onActivityResult(int request, int response, Intent data) {
         super.onActivityResult(request, response, data);
 
-        if (request == RC_SELECT_PLAYERS) {
+        if (request == INVITE_PLAYERS_REQUEST) {
             if (response != Activity.RESULT_OK) {
                 // user canceled
                 Log.d(TAG, "onActivityResult: user canceled player selection.");
@@ -202,7 +205,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         if (mAutoStartSignInFlow) {
             mAutoStartSignInFlow = false;
             mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this,
-                    apiClient, connectionResult, RC_SIGN_IN,
+                    apiClient, connectionResult, SIGN_IN_REQUEST,
                     getString(R.string.signin_other_error));
         }
     }
@@ -227,9 +230,34 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     }
 
-
+    // Start a new Match
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 
-        Toast.makeText(this, "Start Game", Toast.LENGTH_LONG).show();
+            TurnBasedMatch match = result.getMatch();
+
+            startMatch(match);
     }
+
+    private void startMatch(TurnBasedMatch match) {
+        turnData = new TurnData();
+        // Some basic turn data
+      //  mTurnData.data = "First turn";
+
+        currentMatch = match;
+
+        String playerId = Games.Players.getCurrentPlayerId(apiClient);
+        String myParticipantId = currentMatch.getParticipantId(playerId);
+
+
+        Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
+                turnData.persist(), myParticipantId).setResultCallback(
+                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                    @Override
+                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                        //processResult(result);
+                    }
+                });
+    }
+
+
 }
