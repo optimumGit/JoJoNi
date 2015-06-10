@@ -27,6 +27,8 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
 
+import bremen_hs.de.jojoni.seka.GameActivity;
+
 
 public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
@@ -62,6 +64,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             @Override
             public void onClick(View view) {
                 Log.d("Test", "Show Rules gedr�ckt");
+
+                Intent gameIntent = new Intent(getApplicationContext(), GameActivity.class);
+                // Intent starten und zur zweiten Activity wechseln
+                startActivity(gameIntent);
+
+
             }
         });
 

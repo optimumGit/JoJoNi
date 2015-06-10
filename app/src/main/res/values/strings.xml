@@ -8,5 +8,6 @@
     <string name="btnJoinGame">Spiel beitreten</string>
     <string name="btnShowRules">Regeln anzeigen</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
+    <string name="title_activity_game">GameActivity</string>
 
 </resources>
