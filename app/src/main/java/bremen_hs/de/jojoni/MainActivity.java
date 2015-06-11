@@ -90,6 +90,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
         });
 
+        Games.Invitations.registerInvitationListener(apiClient, this);
+
+        Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
     }
 
     @Override
@@ -247,8 +250,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     // Start a new Match
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 
-            TurnBasedMatch match = result.getMatch();
-
+        TurnBasedMatch match = result.getMatch();
+            Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
             startMatch(match);
     }
 
