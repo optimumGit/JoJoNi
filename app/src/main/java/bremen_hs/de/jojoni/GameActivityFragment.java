@@ -1,4 +1,4 @@
-package bremen_hs.de.jojoni.seka;
+package bremen_hs.de.jojoni;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

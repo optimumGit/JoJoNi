@@ -1,4 +1,4 @@
-package bremen_hs.de.jojoni.seka;
+package bremen_hs.de.jojoni;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
