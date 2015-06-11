@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -220,6 +221,11 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onInvitationReceived(Invitation invitation) {
+        Toast.makeText(
+                this,
+                "An invitation has arrived from "
+                        + invitation.getInviter().getDisplayName(), Toast.LENGTH_LONG)
+                .show();
 
     }
 
