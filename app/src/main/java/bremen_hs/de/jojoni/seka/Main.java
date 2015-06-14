@@ -1,4 +1,4 @@
-package bremen_hs.de.jojoni.seka;
+package seka;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ public class Main {
 	//private int cardCount; /*0=6; 1=7; 2=8; 3=9; 4=10; 5=bube; 6=dame; 7=dame; 8=As*/
 	
 	public static void main(String[] args) {
-		Cards one   = new Cards(1, 7);
+		Cards one   = new Cards(1, 8);
 		Cards two   = new Cards(2, 1);
-		Cards three = new Cards(0, 1);
+		Cards three = new Cards(2, 5);
 				
 		List<Cards> hand = new ArrayList<Cards>();
 		hand.add(one);
@@ -26,8 +26,8 @@ public class Main {
 		
 		
 		GameManager gm = new GameManager();
-		float result = gm.testResult(hand, 4);
-		System.out.println(result);
+		float result = gm.testResult(hand);
+		System.out.println("ergebnis: " + result);
 		
 /*		int i = 0;
 		while(i < player.size()){

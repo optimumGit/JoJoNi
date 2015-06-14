@@ -1,13 +1,11 @@
-package bremen_hs.de.jojoni.seka;
+package seka;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 
 /**
- * 
  * @author  Johann Luziv
  * @since   20150608
  * @version 0.1
@@ -18,21 +16,45 @@ public class Results {
 	public Results() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public float results(List<Cards> hand){
+		ArrayList<Float> results = new ArrayList<Float>();
+		results.add(this.highestCard(hand));
+		results.add(this.pair(hand));
+		results.add(this.allSameType(hand));
+		results.add(this.allSameCount(hand));
+		results.add(this.twoAs(hand));
+		
+		Collections.sort(results);
+		//return high score
+		return results.get(results.size() - 1);
+	}
+	
 	/**
 	 * get result of highest card
 	 * 
 	 * @param List<Cards> hand
 	 * @return float result
 	 */
-	public float highestCard(List<Cards> hand){
-		//TODO list nach cards.count sortieren und dann die hoehste raus geben
+	private float highestCard(List<Cards> hand){
+		float result = 0.0f;
 		List<Integer> list = new ArrayList<Integer>();
-		list.add(hand.get(0).getCardCount());
-		list.add(hand.get(1).getCardCount());
-		list.add(hand.get(2).getCardCount());
 		
+		for(int i = 0; i < hand.size(); i++){
+			list.add(hand.get(i).getCardCount());
+		}
+
 		Collections.sort(list);
-		return list.get(2);
+		
+		if(list.get(2) >= 0 && list.get(2) <= 3){
+			result += list.get(2) + 6;
+		}else if(list.get(2) >= 4 && list.get(2) <= 7){
+			result += 10;
+		}else if(list.get(2) == 8){
+			result += 11;	
+		}
+		
+		return result;
 	}
 
 	/**
@@ -41,7 +63,7 @@ public class Results {
 	 * @param List<Cards> hand
 	 * @return float result
 	 */
-	public float pair(List<Cards> hand){
+	private float pair(List<Cards> hand){
 		float result = 0.0f;
 		if(hand.get(0).getCardTyp() == hand.get(1).getCardTyp()){
 			if(hand.get(0).getCardCount() >= 0 && hand.get(0).getCardCount() <= 3){
@@ -59,7 +81,7 @@ public class Results {
 				result += 11;		
 			}
 		}
-		if(hand.get(0).getCardTyp() == hand.get(2).getCardTyp()){
+		else if(hand.get(0).getCardTyp() == hand.get(2).getCardTyp()){
 			if(hand.get(0).getCardCount() >= 0 && hand.get(0).getCardCount() <= 3){
 				result += hand.get(0).getCardCount() + 6;
 			}else if(hand.get(0).getCardCount() >= 4 && hand.get(0).getCardCount() <= 7){
@@ -74,7 +96,7 @@ public class Results {
 				result += 11;		
 			}
 		}
-		if(hand.get(1).getCardTyp() == hand.get(2).getCardTyp()){
+		else if(hand.get(1).getCardTyp() == hand.get(2).getCardTyp()){
 			if(hand.get(1).getCardCount() >= 0 && hand.get(1).getCardCount() <= 3){
 				result += hand.get(1).getCardCount() + 6;
 			}else if(hand.get(1).getCardCount() >= 4 && hand.get(1).getCardCount() <= 7){
@@ -95,9 +117,9 @@ public class Results {
 	/**
 	 * 
 	 * 
-	 * @return float
+	 * @return float result
 	 */
-	public float allSameType(List<Cards> hand){
+	private float allSameType(List<Cards> hand){
 		float result = 0.0f;
 		
 		if(hand.get(0).getCardTyp() == hand.get(1).getCardTyp() && hand.get(0).getCardTyp() == hand.get(2).getCardTyp() 
@@ -105,7 +127,7 @@ public class Results {
 			
 			for(int i = 0; i < hand.size(); i++){
 				if(hand.get(i).getCardCount() >= 0 && hand.get(i).getCardCount() <= 3){
-					result = hand.get(i).getCardCount() + 6;
+					result += hand.get(i).getCardCount() + 6;
 				}
 				if(hand.get(i).getCardCount() >= 4 && hand.get(i).getCardCount() <= 7){
 					result += 10;
@@ -124,7 +146,7 @@ public class Results {
 	 * 
 	 * @return float
 	 */
-	public float allSameCount(List<Cards> hand){
+	private float allSameCount(List<Cards> hand){
 		float as;
 		float six;
 		if(hand.get(0).getCardCount() == hand.get(1).getCardCount() && hand.get(1).getCardCount() == hand.get(2).getCardCount()){
@@ -145,7 +167,7 @@ public class Results {
 	 * 
 	 * @return float
 	 */
-	public float twoAs(List<Cards> hand){
+	private float twoAs(List<Cards> hand){
 		if(hand.get(0).getCardCount() == 8 && hand.get(1).getCardCount() == 8){
 			return 22.0f;
 		}

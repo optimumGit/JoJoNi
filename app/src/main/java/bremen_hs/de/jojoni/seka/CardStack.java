@@ -1,4 +1,4 @@
-package bremen_hs.de.jojoni.seka;
+package seka;
 
 /**
  * @author  Johann Luziv

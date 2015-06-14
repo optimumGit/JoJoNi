@@ -1,4 +1,4 @@
-package bremen_hs.de.jojoni.seka;
+package seka;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,15 +24,21 @@ public class GameManager {
 	/**
 	 * 
 	 * 
-	 * @param player
+	 * @param Player player
+	 * @return Boolean 
 	 */
-	public void playerJoinGame(Player player){
-		players.add(player);
+	public boolean playerJoinGame(Player player){
+		if(players.size() <= 8){
+			players.add(player);
+			return true;
+		}else{
+			return false;
+		}
 	}
 	/**
 	 * 
 	 * 
-	 * @return List<Player>
+	 * @return List<Player> players
 	 */
 	public List<Player> getPlayerList(){
 		return players;
@@ -66,6 +72,7 @@ public class GameManager {
 	 * @param coins
 	 */
 	public void playerRais(Player player, float coins){
+		//TODO hier überprüfen ob der player genug coins hat?!
 		this.pot.playerRais(player, coins);
 	}
 	/**
@@ -78,7 +85,7 @@ public class GameManager {
 	}
 		
 	/**
-	 * shuffle card stack
+	 * shuffle cards stack
 	 * 
 	 * @return List<Cards> stack
 	 */
@@ -92,7 +99,14 @@ public class GameManager {
 		
 		return null;
 	}
-
+	
+/**	public void results(){
+		Results rs = new Results();
+		for (int i = 0; i < players.size(); i++) {
+			
+		}
+	}
+*/
 	// --------------------test methoden-------------------------
 	
 	public void creatNewPlayer(String name){
@@ -100,20 +114,8 @@ public class GameManager {
 		this.playerJoinGame(pl);
 	}
 	
-	public float testResult(List<Cards> hand, int typeOfCheck){
+	public float testResult(List<Cards> hand){
 		Results rs = new Results();
-		float result = 0.0f;
-		if(typeOfCheck == 0){
-			result = rs.pair(hand);
-		}else if(typeOfCheck == 1){
-			result = rs.allSameCount(hand);
-		}else if(typeOfCheck == 2){
-			result = rs.allSameType(hand);
-		}else if(typeOfCheck == 3){
-			result = rs.twoAs(hand);
-		}else if(typeOfCheck == 4){
-			result = rs.highestCard(hand);
-		}
-		return result;
+		return rs.results(hand);
 	}
 }
