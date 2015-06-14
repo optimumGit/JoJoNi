@@ -1,4 +1,4 @@
-package seka;
+package bremen_hs.de.jojoni.seka;
 
 import java.util.ArrayList;
 import java.util.Collections;
