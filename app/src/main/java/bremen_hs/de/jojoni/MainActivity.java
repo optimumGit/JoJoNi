@@ -90,9 +90,6 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
         });
 
-        Games.Invitations.registerInvitationListener(apiClient, this);
-
-        Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
     }
 
     @Override
@@ -220,6 +217,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                     apiClient, connectionResult, SIGN_IN_REQUEST,
                     getString(R.string.signin_other_error));
         }
+        Games.Invitations.registerInvitationListener(apiClient, this);
+
+        Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
     }
 
     @Override
