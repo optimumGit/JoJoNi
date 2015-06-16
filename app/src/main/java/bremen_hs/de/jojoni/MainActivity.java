@@ -2,11 +2,14 @@ package bremen_hs.de.jojoni;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -29,7 +32,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class MainActivity extends Activity implements MainFragment.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "SekaCardGame";
@@ -42,6 +45,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
 
     private GoogleApiClient apiClient;
+
+
 
 
     @Override
@@ -64,9 +69,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             public void onClick(View view) {
                 Log.d("Test", "Show Rules gedr�ckt");
 
-                Intent gameIntent = new Intent(getApplicationContext(), GameActivity.class);
-                // Intent starten und zur zweiten Activity wechseln
-                startActivity(gameIntent);
+        setContentView(R.layout.fragment_game);
 
 
             }
@@ -90,9 +93,9 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
             }
         });
 
-        Games.Invitations.registerInvitationListener(apiClient, this);
+    //    Games.Invitations.registerInvitationListener(apiClient, this);
 
-        Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+    //    Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
     }
 
     @Override
@@ -277,4 +280,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
 
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
