@@ -1,15 +1,15 @@
 package bremen_hs.de.jojoni;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -43,10 +43,7 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
     private TurnBasedMatch currentMatch;
     private TurnData turnData;
 
-
     private GoogleApiClient apiClient;
-
-
 
 
     @Override
@@ -115,6 +112,36 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         }
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "Connected");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        Log.d(TAG, "Connection failed" + GooglePlayServicesUtil.getErrorString(connectionResult.getErrorCode()));
+        Log.d(TAG, "onConnectionFailed(): attempting to resolve");
+        if (mResolvingConnectionFailure) {
+            // Already resolving
+            Log.d(TAG, "onConnectionFailed(): ignoring connection failure, already resolving.");
+            return;
+        }
+
+        // Launch the sign-in flow if the button was clicked or if auto sign-in is enabled
+        if (mAutoStartSignInFlow) {
+            mAutoStartSignInFlow = false;
+            mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this,
+                    apiClient, connectionResult, SIGN_IN_REQUEST,
+                    getString(R.string.signin_other_error));
+        }
+    }
+
 
     // Instantiate a new TurnBasedMatch - Getting to the Lobby
     private void onStartMatchClicked() {
@@ -173,6 +200,45 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         }
     }
 
+    // Start a new Match
+    private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+
+        TurnBasedMatch match = result.getMatch();
+        Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
+        startMatch(match);
+    }
+
+    private void startMatch(TurnBasedMatch match) {
+        turnData = new TurnData();
+        // Some basic turn data
+        //  mTurnData.data = "First turn";
+
+        currentMatch = match;
+
+        String playerId = Games.Players.getCurrentPlayerId(apiClient);
+        String myParticipantId = currentMatch.getParticipantId(playerId);
+
+        FragmentManager fragmentManager = getFragmentManager();
+
+        GameActivityFragment gameFragment = new GameActivityFragment();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.fragment, gameFragment);
+
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            ft.commit();
+
+
+
+        /*Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
+                turnData.persist(), myParticipantId).setResultCallback(
+                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                    @Override
+                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                        //processResult(result);
+                    }
+                });*/
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -195,35 +261,6 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d(TAG, "Connected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-        Log.d(TAG, "Connection failed" + GooglePlayServicesUtil.getErrorString(connectionResult.getErrorCode()));
-        Log.d(TAG, "onConnectionFailed(): attempting to resolve");
-        if (mResolvingConnectionFailure) {
-            // Already resolving
-            Log.d(TAG, "onConnectionFailed(): ignoring connection failure, already resolving.");
-            return;
-        }
-
-        // Launch the sign-in flow if the button was clicked or if auto sign-in is enabled
-        if (mAutoStartSignInFlow) {
-            mAutoStartSignInFlow = false;
-            mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this,
-                    apiClient, connectionResult, SIGN_IN_REQUEST,
-                    getString(R.string.signin_other_error));
-        }
-    }
 
     @Override
     public void onInvitationReceived(Invitation invitation) {
@@ -249,36 +286,6 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
     public void onTurnBasedMatchRemoved(String s) {
 
     }
-
-    // Start a new Match
-    private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-
-        TurnBasedMatch match = result.getMatch();
-            Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
-            startMatch(match);
-    }
-
-    private void startMatch(TurnBasedMatch match) {
-        turnData = new TurnData();
-        // Some basic turn data
-      //  mTurnData.data = "First turn";
-
-        currentMatch = match;
-
-        String playerId = Games.Players.getCurrentPlayerId(apiClient);
-        String myParticipantId = currentMatch.getParticipantId(playerId);
-
-
-        Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
-                turnData.persist(), myParticipantId).setResultCallback(
-                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        //processResult(result);
-                    }
-                });
-    }
-
 
     @Override
     public void onFragmentInteraction(Uri uri) {
