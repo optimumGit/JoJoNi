@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -32,7 +30,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements MainFragment.OnFragmentInteractionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class MainActivity extends FragmentActivity implements MainFragment.MainListener, GameActivityFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "SekaCardGame";
@@ -44,6 +42,10 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
     private TurnData turnData;
 
     private GoogleApiClient apiClient;
+
+    // Fragments
+    GameActivityFragment gameActivityFragment;
+    MainFragment mainFragment;
 
 
     @Override
@@ -59,36 +61,13 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        // Der Regeln anzeigen Button wird mit der Funktion verkn�pft
-        ImageButton buttonShowRules = (ImageButton) findViewById(R.id.btnShowRules);
-        buttonShowRules.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d("Test", "Show Rules gedr�ckt");
+        gameActivityFragment = new GameActivityFragment();
+        mainFragment = new MainFragment();
 
-        setContentView(R.layout.fragment_game);
+        gameActivityFragment.setGameListener(this);
+        mainFragment.setMainListener(this);
 
-
-            }
-        });
-
-        // Der Spiel Erstellen Button wird mit der Funktion verkn�pft
-        ImageButton buttonCreateGame = (ImageButton) findViewById(R.id.btnCreateGame);
-        buttonCreateGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onStartMatchClicked();
-            }
-        });
-
-        // Der Spiel Beitreten Button wird mit der Funktion verkn�pft
-        ImageButton buttonJoinGame = (ImageButton) findViewById(R.id.btnJoinGame);
-        buttonJoinGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Funktion
-            }
-        });
+        getFragmentManager().beginTransaction().add(R.id.fragment, mainFragment).commit();
 
     //    Games.Invitations.registerInvitationListener(apiClient, this);
 
@@ -140,6 +119,27 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
                     apiClient, connectionResult, SIGN_IN_REQUEST,
                     getString(R.string.signin_other_error));
         }
+    }
+
+
+    @Override
+    public void onFinishedTurn() {
+
+    }
+
+    @Override
+    public void onCreateGameClicked() {
+        onStartMatchClicked();
+    }
+
+    @Override
+    public void onJoinGameClicked() {
+
+    }
+
+    @Override
+    public void onShowRulesClicked() {
+
     }
 
 
@@ -220,9 +220,8 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
 
         FragmentManager fragmentManager = getFragmentManager();
 
-        GameActivityFragment gameFragment = new GameActivityFragment();
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.fragment, gameFragment);
+            ft.replace(R.id.fragment, gameActivityFragment);
 
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
@@ -284,11 +283,6 @@ public class MainActivity extends Activity implements MainFragment.OnFragmentInt
 
     @Override
     public void onTurnBasedMatchRemoved(String s) {
-
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
     }
 }

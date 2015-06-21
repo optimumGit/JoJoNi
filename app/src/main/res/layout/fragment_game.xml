@@ -11,9 +11,9 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
+        android:id="@+id/raise_button"
         android:background="@drawable/button_erhoehen"
-        android:layout_above="@+id/imageButton3"
+        android:layout_above="@+id/fold_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="20dp" />
@@ -21,16 +21,16 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton2"
+        android:id="@+id/call_button"
         android:background="@drawable/button_mitgehen"
-        android:layout_alignTop="@+id/imageButton"
+        android:layout_alignTop="@+id/raise_button"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton3"
+        android:id="@+id/fold_button"
         android:background="@drawable/button_passen"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -40,9 +40,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
         android:background="@drawable/deckblatt"
-        android:layout_above="@+id/imageButton"
-        android:layout_toLeftOf="@+id/imageButton3"
-        android:layout_toStartOf="@+id/imageButton3"
+        android:layout_above="@+id/raise_button"
+        android:layout_toLeftOf="@+id/call_button"
+        android:layout_toStartOf="@+id/fold_button"
         android:layout_marginBottom="40dp" />
 
     <ImageView
@@ -59,8 +59,8 @@
         android:id="@+id/imageView3"
         android:background="@drawable/deckblatt"
         android:layout_alignTop="@+id/imageView2"
-        android:layout_toRightOf="@+id/imageButton3"
-        android:layout_toEndOf="@+id/imageButton3" />
+        android:layout_toRightOf="@+id/fold_button"
+        android:layout_toEndOf="@+id/fold_button" />
 
     <TextView
         android:layout_width="wrap_content"
