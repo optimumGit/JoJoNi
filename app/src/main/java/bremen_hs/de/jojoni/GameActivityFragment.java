@@ -55,18 +55,22 @@ public class GameActivityFragment extends Fragment implements View.OnClickListen
         // TODO implement methods
         switch(view.getId()){
             case R.id.raise_button:
-                gameListener.onFinishedTurn();
-                return;
+                gameListener.onRaiseButtonClicked();
+                break;
             case R.id.call_button:
-                gameListener.onFinishedTurn();
-                return;
+                gameListener.onCallButtonClicked();
+                break;
             case R.id.fold_button:
-                gameListener.onFinishedTurn();
-                return;
+                gameListener.onFoldButtonClicked();
+                break;
         }
     }
 
+    // The functions for the three buttons, implemented by the MainActivity
     public interface GameListener{
         void onFinishedTurn();
+        void onRaiseButtonClicked();
+        void onCallButtonClicked();
+        void onFoldButtonClicked();
     }
 }

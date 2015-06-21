@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -134,6 +133,27 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     }
 
+
+    // implementing the GameActivityFragment interface
+    @Override
+    public void onRaiseButtonClicked() {
+        // call the gameManager functions
+        playerRaise();
+    }
+
+    @Override
+    public void onCallButtonClicked() {
+        playerCall();
+    }
+
+    @Override
+    public void onFoldButtonClicked() {
+        playerFold();
+    }
+
+
+
+    // implementing the mainFragment interface
     @Override
     public void onCreateGameClicked() {
         onStartMatchClicked();
@@ -146,7 +166,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onShowRulesClicked() {
-
+        getFragmentManager().beginTransaction().add(R.id.fragment, gameActivityFragment).commit();
     }
 
 
@@ -207,14 +227,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
     }
 
-    // Start a new Match
-    private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-
-        TurnBasedMatch match = result.getMatch();
-        Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
-        startMatch(match);
-    }
-
     private void startMatch(TurnBasedMatch match) {
         turnData = new TurnData();
         // Some basic turn data
@@ -233,16 +245,31 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
 
-
-
-        /*Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
+        Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
                 turnData.persist(), myParticipantId).setResultCallback(
                 new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                     @Override
                     public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        //processResult(result);
+                        processResult(result);
                     }
-                });*/
+                });
+    }
+
+    // Start a new Match
+    private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+
+        TurnBasedMatch match = result.getMatch();
+        Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
+        startMatch(match);
+    }
+
+    private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+        updateUi();
+        Toast.makeText(this, "Game updated", Toast.LENGTH_LONG).show();
+    }
+
+    private void updateUi() {
+
     }
 
     @Override
@@ -295,7 +322,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     //******************* spiel logik************************
 
-    public void playerFold(View view){
+    public void playerFold(){
         Context context = getApplicationContext();
         CharSequence text = "playerFold";
         int duration = Toast.LENGTH_SHORT;
@@ -303,7 +330,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-    public void playerRaise(View view){
+    public void playerRaise(){
         Context context = getApplicationContext();
         CharSequence text = "playerRaise";
         int duration = Toast.LENGTH_SHORT;
@@ -311,7 +338,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-    public void playerCall(View view){
+    public void playerCall(){
         Context context = getApplicationContext();
         CharSequence text = "playerCall";
         int duration = Toast.LENGTH_SHORT;
