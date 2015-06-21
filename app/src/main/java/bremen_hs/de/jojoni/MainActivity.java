@@ -33,7 +33,8 @@ import java.util.ArrayList;
 import bremen_hs.de.jojoni.seka.GameManager;
 
 
-public class MainActivity extends FragmentActivity implements MainFragment.MainListener, GameActivityFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
+        GameActivityFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "SekaCardGame";
@@ -322,7 +323,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     //******************* spiel logik************************
 
-    public void playerFold(){
+    private void playerFold(){
         Context context = getApplicationContext();
         CharSequence text = "playerFold";
         int duration = Toast.LENGTH_SHORT;
@@ -330,7 +331,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-    public void playerRaise(){
+    private void playerRaise(){
         Context context = getApplicationContext();
         CharSequence text = "playerRaise";
         int duration = Toast.LENGTH_SHORT;
@@ -338,7 +339,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
-    public void playerCall(){
+    private void playerCall(){
         Context context = getApplicationContext();
         CharSequence text = "playerCall";
         int duration = Toast.LENGTH_SHORT;
