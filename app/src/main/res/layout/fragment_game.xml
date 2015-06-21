@@ -27,7 +27,8 @@
         android:layout_alignTop="@+id/raise_button"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="playerCall"/>
+        android:onClick="playerCall"
+        />
 
     <ImageButton
         android:layout_width="wrap_content"
