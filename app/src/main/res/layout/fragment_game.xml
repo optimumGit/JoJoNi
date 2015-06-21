@@ -28,7 +28,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="playerCall"
-        />
+      />
 
     <ImageButton
         android:layout_width="wrap_content"
