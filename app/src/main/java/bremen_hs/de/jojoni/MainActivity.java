@@ -3,12 +3,14 @@ package bremen_hs.de.jojoni;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +31,8 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
 
+import bremen_hs.de.jojoni.seka.GameManager;
+
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener, GameActivityFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
@@ -42,6 +46,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private TurnData turnData;
 
     private GoogleApiClient apiClient;
+
+    //seka
+    GameManager gameManager = new GameManager();
 
     // Fragments
     GameActivityFragment gameActivityFragment;
@@ -284,5 +291,32 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onTurnBasedMatchRemoved(String s) {
 
+    }
+
+    //******************* spiel logik************************
+
+    public void playerFold(View view){
+        Context context = getApplicationContext();
+        CharSequence text = "playerFold";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+    public void playerRaise(View view){
+        Context context = getApplicationContext();
+        CharSequence text = "playerRaise";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+    public void playerCall(View view){
+        Context context = getApplicationContext();
+        CharSequence text = "playerCall";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 }

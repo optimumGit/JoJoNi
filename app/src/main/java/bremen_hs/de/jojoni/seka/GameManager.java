@@ -100,13 +100,17 @@ public class GameManager {
 		return null;
 	}
 	
-/**	public void results(){
+	public HashMap<Player, Float> results(){
 		Results rs = new Results();
+		HashMap<Player, Float> gameResults = new HashMap<Player, Float>();
+		float result = 0.0f;
 		for (int i = 0; i < players.size(); i++) {
-			
+			result = rs.results(players.get(i).getHand());
+			gameResults.put(players.get(i), result);
 		}
+		return gameResults;
 	}
-*/
+
 	// --------------------test methoden-------------------------
 	
 	public void creatNewPlayer(String name){
