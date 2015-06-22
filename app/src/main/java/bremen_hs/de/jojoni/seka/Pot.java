@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class Pot {
 	private float pot = 0;
+    private float lastRaise = 0;
 	private HashMap<Player, Float> potHistory; 
 	
 	
@@ -42,23 +43,42 @@ public class Pot {
 	 * @param coins
 	 */
 	public void playerRais(Player player, float coins){
-		pot =+ coins;
-		writteToHistory(player, coins);
+		this.pot =+ coins;
+        this.lastRaise = coins;
+		writeToHistory(player, coins);
 	}
-	
-	public void playerPass(Player player){
+    /**
+     *
+     * @param player
+     */
+	public void playerFold(Player player){
 		player.getHand().clear();
+        writeToHistory(player);
 	}
-	
+
+    /**
+     *
+     * @param player
+     */
+    public void playerCall(Player player){
+        this.pot =+ lastRaise;
+        writeToHistory(player);
+    }
 	/**
 	 * 
 	 * @param player
 	 * @param coins
 	 */
-	private void writteToHistory(Player player, float coins){
+	private void writeToHistory(Player player, float coins){
 		this.potHistory.put(player, coins);
 	}
-	
 
+    /**
+     *
+     * @param player
+     */
+    private void writeToHistory(Player player){
+        this.potHistory.put(player, null);
+    }
 	
 }

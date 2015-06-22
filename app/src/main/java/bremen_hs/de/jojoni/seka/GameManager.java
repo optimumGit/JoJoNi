@@ -35,7 +35,34 @@ public class GameManager {
 			return false;
 		}
 	}
-	/**
+    /**
+     *
+     *
+     * @param player
+     * @param coins
+     */
+    public void playerRais(Player player, float coins){
+        //TODO hier überprüfen ob der player genug coins hat?!
+        this.pot.playerRais(player, coins);
+    }
+    /**
+     *
+     *
+     * @param player
+     */
+    public void playerFold(Player player){
+        this.pot.playerFold(player);
+    }
+
+    /**
+     *
+     * @param player
+     */
+    public void playerCall(Player player){
+
+    }
+
+    /**
 	 * 
 	 * 
 	 * @return List<Player> players
@@ -65,25 +92,7 @@ public class GameManager {
 			y = 0;
 		}
 	}
-	/**
-	 * 
-	 * 
-	 * @param player
-	 * @param coins
-	 */
-	public void playerRais(Player player, float coins){
-		//TODO hier überprüfen ob der player genug coins hat?!
-		this.pot.playerRais(player, coins);
-	}
-	/**
-	 * 
-	 * 
-	 * @param player
-	 */
-	public void playerPass(Player player){
-		this.pot.playerPass(player);
-	}
-		
+
 	/**
 	 * shuffle cards stack
 	 * 
@@ -95,11 +104,7 @@ public class GameManager {
 		return stack;
 	}
 	
-	public HashMap<Player, Integer> result(){
-		
-		return null;
-	}
-	
+
 	public HashMap<Player, Float> results(){
 		Results rs = new Results();
 		HashMap<Player, Float> gameResults = new HashMap<Player, Float>();

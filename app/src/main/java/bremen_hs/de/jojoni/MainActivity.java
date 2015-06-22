@@ -31,6 +31,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 
 import bremen_hs.de.jojoni.seka.GameManager;
+import bremen_hs.de.jojoni.seka.Player;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
@@ -322,8 +323,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     //******************* spiel logik************************
-
+    //TODO player object mit uebergeben
     private void playerFold(){
+
+        //gameManager.playerFold(Player);
+
         Context context = getApplicationContext();
         CharSequence text = "playerFold";
         int duration = Toast.LENGTH_SHORT;
@@ -332,6 +336,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         toast.show();
     }
     private void playerRaise(){
+
+        //gameManager.playerRais(Player, coins);
+
         Context context = getApplicationContext();
         CharSequence text = "playerRaise";
         int duration = Toast.LENGTH_SHORT;
@@ -340,6 +347,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         toast.show();
     }
     private void playerCall(){
+
+        //gameManager.playerCall(Player);
+
         Context context = getApplicationContext();
         CharSequence text = "playerCall";
         int duration = Toast.LENGTH_SHORT;
