@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CardStack {
 	
-	private List<Cards> stack;
+	private List<Cards> stack = null;
 	
 	public CardStack(){
 		stack = new ArrayList<Cards>();
@@ -28,8 +28,7 @@ public class CardStack {
 	}
  	
 	/**
-	 *  
-	 *  creat new staack
+	 * Creat new stack
 	 *  
 	 */
 	private void newStack(){

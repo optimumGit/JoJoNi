@@ -16,7 +16,7 @@ import java.util.List;
 public class GameManager {
 	private CardStack cardStack = new CardStack();
 	private List<Player> players = new ArrayList<Player>();
-	private Pot pot;
+	private Pot pot = null;
 
 	public GameManager() {
 		this.pot = new Pot();
@@ -24,7 +24,7 @@ public class GameManager {
 	/**
 	 * 
 	 * 
-	 * @param Player player
+	 * @param player player
 	 * @return Boolean 
 	 */
 	public boolean playerJoinGame(Player player){
@@ -119,8 +119,8 @@ public class GameManager {
 	// --------------------test methoden-------------------------
 	
 	public void creatNewPlayer(String name){
-		Player pl = new Player(name);
-		this.playerJoinGame(pl);
+		//Player pl = new Player(name);
+	//	this.playerJoinGame(pl);
 	}
 	
 	public float testResult(List<Cards> hand){

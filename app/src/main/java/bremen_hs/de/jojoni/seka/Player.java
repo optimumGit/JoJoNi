@@ -11,33 +11,57 @@ import java.util.Vector;
  */
 
 public class Player {
-	//TODO die spieler hand wird nicht gelert
-	private String name;
-	private float coins = 1000; //TODO 
-	private List<Cards> hand;
-	private boolean dealer = false; 
+	private String playerName = null;
+    private String playerID   = null;
+	private float playerCoins = 1000; //TODO start coins??
+	private List<Cards> hand  = null;
+	private boolean dealer    = false;
 
-	public Player(String name){
-		this.hand   = new ArrayList<Cards>();
-		this.name   = name;
+	public Player(String playerName, String playerID){
+		this.hand = new ArrayList<Cards>();
+		this.playerName = playerName;
+        this.playerID   = playerID;
 	}
 
+    /**
+     *
+     * @param dealerButton
+     */
 	public void setDealer(boolean dealerButton){
 		this.dealer = dealerButton;
 	}
-
-	public String getName(){
-		return this.name;
+    /**
+     *
+     * @return
+     */
+	public String getPlayerName(){
+		return this.playerName;
 	}
-
-	public float getCoinsCount(){
-		return this.coins;
+    /**
+     *
+     * @return
+     */
+    public String getPlayerID(){
+        return this.playerID;
+    }
+    /**
+     *
+     * @return
+     */
+    public float getCoinsCount(){
+		return this.playerCoins;
 	}
-
+    /**
+     *
+     * @return
+     */
 	public List<Cards> getHand(){
 		return this.hand;
 	}
-
+    /**
+     *
+     * @return
+     */
 	public boolean isDealer(){
 		return this.dealer;
 	}
@@ -50,14 +74,32 @@ public class Player {
 		this.hand.add(card);
 	}
 
+    /**
+     *
+     * @param coins
+     */
+    public void winCoints(float coins){
+        this.playerCoins =+ coins;
+    }
+
+    /**
+     *
+     * @param coins
+     * @return
+     */
+    public float setCoinsInGame(float coins){
+        if(this.playerCoins >= coins){
+            this.playerCoins =- coins;
+            return coins;
+        }else{
+            return 0;//TODO
+        }
+    }
+
 	//Eine Karte waehlen, die anstatt den Jocker sein wird.
 /**	public Cards chosseJocker(){
 		return null;
 	}
 */
-	public String toString(){
-		return this.name;
-	}
-
 
 }
