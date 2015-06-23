@@ -20,7 +20,6 @@ import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
@@ -106,6 +105,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if(apiClient.isConnected()){
             Games.Invitations.registerInvitationListener(apiClient, this);
             Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+        }
+        if (currentMatch != null) {
+            if (apiClient == null || !apiClient.isConnected()) {
+                Log.d(TAG, "Warning: accessing TurnBasedMatch when not connected");
+            }
+            updateMatch(currentMatch);
+            return;
         }
     }
 
@@ -206,7 +212,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
             if (match != null) {
-               // updateMatch(match);
+               updateMatch(match);
             }
         }
         if (request == INVITE_PLAYERS_REQUEST) {
@@ -220,34 +226,60 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             final ArrayList<String> invitees = data
                     .getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
-            // get automatch criteria
-            Bundle autoMatchCriteria = null;
-
-            int minAutoMatchPlayers = data.getIntExtra(
-                    Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-            int maxAutoMatchPlayers = data.getIntExtra(
-                    Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-
-            if (minAutoMatchPlayers > 0) {
-                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
-                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
-            } else {
-                autoMatchCriteria = null;
-            }
-
             TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                    .addInvitedPlayers(invitees)
-                    .setAutoMatchCriteria(autoMatchCriteria).build();
+                    .addInvitedPlayers(invitees).build();
 
             // Start the match
             Games.TurnBasedMultiplayer.createMatch(apiClient, tbmc).setResultCallback(
                     new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
                         @Override
                         public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-                            processResult(result);
+                                processResult(result);
                         }
                     });
         }
+    }
+
+    private void updateMatch(TurnBasedMatch match) {
+        currentMatch = match;
+
+        int status = match.getStatus();
+        int turnStatus = match.getTurnStatus();
+
+        switch (status) {
+            case TurnBasedMatch.MATCH_STATUS_CANCELED:
+                Toast.makeText(this, "Canceled!", Toast.LENGTH_LONG).show();
+                return;
+            case TurnBasedMatch.MATCH_STATUS_EXPIRED:
+                Toast.makeText(this, "Expired!", Toast.LENGTH_LONG).show();
+                return;
+            case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
+                Toast.makeText(this, "Waiting for auto-match...", Toast.LENGTH_LONG).show();
+                return;
+            case TurnBasedMatch.MATCH_STATUS_COMPLETE:
+                if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE) {
+                    Toast.makeText(this, "Complete! This game is over", Toast.LENGTH_LONG).show();
+                    break;
+                }
+        }
+
+        // OK, it's active. Check on turn status.
+        switch (turnStatus) {
+            case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
+                turnData = turnData.unpersist(currentMatch.getData());
+                updateUi();
+                return;
+            case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
+                // Should return results.
+                Toast.makeText(this, "It's not your turn.", Toast.LENGTH_LONG).show();
+                break;
+            case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
+                Toast.makeText(this, "Good inititative! Still waiting for invitations.\n\nBe patient!", Toast.LENGTH_LONG).show();
+        }
+
+        turnData = null;
+
+
     }
 
     private void startMatch(TurnBasedMatch match) {
@@ -284,11 +316,23 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 
         TurnBasedMatch match = result.getMatch();
+        if (match.getData() != null) {
+            // This is a game that has already started, so I'll just start
+            updateMatch(match);
+            return;
+        }
         Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
         startMatch(match);
     }
 
     private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+        TurnBasedMatch match= result.getMatch();
+        boolean isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
+
+        if (isDoingTurn) {
+            updateMatch(match);
+            return;
+        }
         updateUi();
         Toast.makeText(this, "Game updated", Toast.LENGTH_LONG).show();
     }
