@@ -31,7 +31,6 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 
 import bremen_hs.de.jojoni.seka.GameManager;
-import bremen_hs.de.jojoni.seka.Player;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
@@ -41,6 +40,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final String TAG = "SekaCardGame";
     private static final int INVITE_PLAYERS_REQUEST = 10000;
     private static final int SIGN_IN_REQUEST = 9001;
+    final static int RC_LOOK_AT_MATCHES = 10001;
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
     private TurnBasedMatch currentMatch;
@@ -77,9 +77,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         getFragmentManager().beginTransaction().add(R.id.fragment, mainFragment).commit();
 
-    //    Games.Invitations.registerInvitationListener(apiClient, this);
-
-    //    Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+        if(apiClient.isConnected()) {
+            Games.Invitations.registerInvitationListener(apiClient, this);
+            Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+        }
     }
 
     @Override
@@ -163,7 +164,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onJoinGameClicked() {
-
+        onCheckGamesClicked();
     }
 
     @Override
@@ -171,6 +172,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         getFragmentManager().beginTransaction().add(R.id.fragment, gameActivityFragment).commit();
     }
 
+    public void onCheckGamesClicked() {
+        Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiClient);
+        startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+    }
 
     // Instantiate a new TurnBasedMatch - Getting to the Lobby
     private void onStartMatchClicked() {
@@ -187,6 +192,24 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         super.onActivityResult(request, response, data);
         if( request == SIGN_IN_REQUEST){
             apiClient.connect();
+            if(apiClient.isConnected()){
+                Games.Invitations.registerInvitationListener(apiClient, this);
+                Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+            }
+        } else if (request == RC_LOOK_AT_MATCHES) {
+            // Returning from the 'Select Match' dialog
+
+            if (response != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            TurnBasedMatch match = data
+                    .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+
+            if (match != null) {
+               // updateMatch(match);
+            }
         }
         if (request == INVITE_PLAYERS_REQUEST) {
             if (response != Activity.RESULT_OK) {
@@ -237,6 +260,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         currentMatch = match;
 
         String playerId = Games.Players.getCurrentPlayerId(apiClient);
+        com.google.android.gms.games.Player part = Games.Players.getCurrentPlayer(apiClient);
+        Toast.makeText(this, "playerId " + playerId + " participant " + part.getDisplayName(), Toast.LENGTH_LONG).show();
         String myParticipantId = currentMatch.getParticipantId(playerId);
 
         FragmentManager fragmentManager = getFragmentManager();
