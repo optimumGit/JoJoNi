@@ -103,6 +103,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
+        if(apiClient.isConnected()){
+            Games.Invitations.registerInvitationListener(apiClient, this);
+            Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+        }
     }
 
     @Override
@@ -154,8 +158,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         playerFold();
     }
 
-
-
     // implementing the mainFragment interface
     @Override
     public void onCreateGameClicked() {
@@ -192,10 +194,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         super.onActivityResult(request, response, data);
         if( request == SIGN_IN_REQUEST){
             apiClient.connect();
-            if(apiClient.isConnected()){
-                Games.Invitations.registerInvitationListener(apiClient, this);
-                Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
-            }
         } else if (request == RC_LOOK_AT_MATCHES) {
             // Returning from the 'Select Match' dialog
 
