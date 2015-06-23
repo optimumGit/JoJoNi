@@ -8,7 +8,7 @@ package bremen_hs.de.jojoni.seka;
 
 public class Cards {
 	private int cardType;  /*0=karo; 1=herz; 2=kreuz; 3=pik;*/
-	private int cardCount; /*0=6; 1=7; 2=8; 3=9; 4=10; 5=bube; 6=dame; 7=dame; 8=As*/
+	private int cardCount; /*0=6; 1=7; 2=8; 3=9; 4=10; 5=bube; 6=dame; 7=king; 8=As*/
 	
 	public Cards (int type, int count){
 		this.cardType  = type;

@@ -14,7 +14,7 @@ import java.util.List;
 public class Pot {
 	private float pot = 0;
     private float lastRaise = 0;
-	private HashMap<Player, Float> potHistory; 
+	private HashMap<Player, Float> potHistory = null;
 	
 	
 	public Pot(){}
