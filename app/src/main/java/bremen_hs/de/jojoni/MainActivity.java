@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +36,7 @@ import bremen_hs.de.jojoni.seka.GameManager;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
-        GameActivityFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        GameFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "SekaCardGame";
@@ -52,7 +54,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     GameManager gameManager = new GameManager();
 
     // Fragments
-    GameActivityFragment gameActivityFragment;
+    GameFragment gameFragment;
     MainFragment mainFragment;
 
 
@@ -69,10 +71,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 .addApi(Games.API).addScope(Games.SCOPE_GAMES)
                 .build();
 
-        gameActivityFragment = new GameActivityFragment();
+        gameFragment = new GameFragment();
         mainFragment = new MainFragment();
 
-        gameActivityFragment.setGameListener(this);
+        gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
         getFragmentManager().beginTransaction().add(R.id.fragment, mainFragment).commit();
@@ -141,7 +143,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
 
-    // implementing the GameActivityFragment interface
+    // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
         // call the gameManager functions
@@ -171,7 +173,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onShowRulesClicked() {
-        getFragmentManager().beginTransaction().add(R.id.fragment, gameActivityFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
     }
 
     public void onCheckGamesClicked() {
@@ -265,7 +267,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         FragmentManager fragmentManager = getFragmentManager();
 
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.fragment, gameActivityFragment);
+            ft.replace(R.id.fragment, gameFragment);
 
             ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
             ft.commit();
@@ -286,6 +288,63 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         TurnBasedMatch match = result.getMatch();
         Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
         startMatch(match);
+    }
+
+    private void showExitAppPopUp() {
+
+        AlertDialog.Builder exitPopUp = new AlertDialog.Builder(this);
+        exitPopUp.setTitle("App Beenden");
+        exitPopUp.setMessage("Möchsten Sie das Spiel beenden?");
+
+        exitPopUp.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        System.exit(0);
+                    }
+                })
+                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Nicht beenden
+                    }
+                });
+
+        AlertDialog PopUp = exitPopUp.create();
+        PopUp.show();
+    }
+
+
+    private void showExitGamePopUp() {
+
+        AlertDialog.Builder exitPopUp = new AlertDialog.Builder(this);
+        exitPopUp.setTitle("Partie Beenden");
+        exitPopUp.setMessage("Möchten Sie diese Partie beenden?");
+
+        exitPopUp.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+                    }
+                })
+                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //Nicht beenden
+                    }
+                });
+
+        AlertDialog PopUp = exitPopUp.create();
+        PopUp.show();
+    }
+
+    public void onBackPressed(){
+
+        if (mainFragment.isVisible()){
+            showExitAppPopUp();
+        }
+        else if (gameFragment.isVisible()){
+
+            showExitGamePopUp();
+
+
+        }
+
     }
 
     private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {

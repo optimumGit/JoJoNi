@@ -10,7 +10,9 @@ import android.widget.ImageButton;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class GameActivityFragment extends Fragment implements View.OnClickListener {
+public class GameFragment extends Fragment implements View.OnClickListener {
+
+    MainFragment mainFragment;
 
     static int[] BUTTONS = {
             R.id.raise_button, R.id.call_button, R.id.fold_button
@@ -19,7 +21,10 @@ public class GameActivityFragment extends Fragment implements View.OnClickListen
     GameListener gameListener = null;
 
 
-    public GameActivityFragment() {
+    public GameFragment() {
+
+        mainFragment = new MainFragment();
+
     }
 
     @Override
@@ -30,6 +35,8 @@ public class GameActivityFragment extends Fragment implements View.OnClickListen
             ((ImageButton) v.findViewById(i)).setOnClickListener(this);
         }
         return v;
+
+
 
     }
 
@@ -48,6 +55,8 @@ public class GameActivityFragment extends Fragment implements View.OnClickListen
             return;
         }
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -72,5 +81,6 @@ public class GameActivityFragment extends Fragment implements View.OnClickListen
         void onRaiseButtonClicked();
         void onCallButtonClicked();
         void onFoldButtonClicked();
+
     }
 }
