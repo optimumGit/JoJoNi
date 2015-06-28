@@ -14,7 +14,7 @@ public class TurnData {
         return null;
     }
 
-    public TurnData unpersist(){
+    public TurnData unpersist(byte[] data){
         return null;
     }
 }
