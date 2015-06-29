@@ -159,11 +159,61 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onCallButtonClicked() {
         playerCall();
+        onDoneClicked();
     }
 
     @Override
     public void onFoldButtonClicked() {
         playerFold();
+    }
+
+    public void onDoneClicked() {
+
+        String nextParticipantId = getNextParticipantId();
+        // Create the next turn
+        turnData.setTurn(turnData.getTurn() + 1);
+        int turn =  turnData.getTurn();
+        turnData.setData("Turn Nr. " + turn);
+
+
+        Games.TurnBasedMultiplayer.takeTurn(apiClient, currentMatch.getMatchId(),
+                turnData.persist(), nextParticipantId).setResultCallback(
+                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                    @Override
+                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+                        processResult(result);
+                    }
+                });
+
+        //turnData = null;
+    }
+
+    private String getNextParticipantId() {
+        String playerId = Games.Players.getCurrentPlayerId(apiClient);
+        String myParticipantId = currentMatch.getParticipantId(playerId);
+
+        ArrayList<String> participantIds = currentMatch.getParticipantIds();
+
+        int desiredIndex = -1;
+
+        for (int i = 0; i < participantIds.size(); i++) {
+            if (participantIds.get(i).equals(myParticipantId)) {
+                desiredIndex = i + 1;
+            }
+        }
+
+        if (desiredIndex < participantIds.size()) {
+            return participantIds.get(desiredIndex);
+        }
+
+        if (currentMatch.getAvailableAutoMatchSlots() <= 0) {
+            // You've run out of automatch slots, so we start over.
+            return participantIds.get(0);
+        } else {
+            // You have not yet fully automatched, so null will find a new
+            // person to play against.
+            return null;
+        }
     }
 
     // implementing the mainFragment interface
@@ -214,6 +264,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
             if (match != null) {
+                getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
                updateMatch(match);
             }
         }
@@ -269,6 +320,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         switch (turnStatus) {
             case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
                 turnData = turnData.unpersist(currentMatch.getData());
+                Toast.makeText(this, "turnData: " + turnData.getData(), Toast.LENGTH_LONG).show();
                 updateUi();
                 return;
             case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
@@ -279,7 +331,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 Toast.makeText(this, "Good inititative! Still waiting for invitations.\n\nBe patient!", Toast.LENGTH_LONG).show();
         }
 
-        turnData = null;
+     //   turnData = null;
 
 
     }
@@ -287,13 +339,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void startMatch(TurnBasedMatch match) {
         turnData = new TurnData();
         // Some basic turn data
-        //  mTurnData.data = "First turn";
+        turnData.setData("First turn");
 
         currentMatch = match;
 
         String playerId = Games.Players.getCurrentPlayerId(apiClient);
-        com.google.android.gms.games.Player part = Games.Players.getCurrentPlayer(apiClient);
-        Toast.makeText(this, "playerId " + playerId + " participant " + part.getDisplayName(), Toast.LENGTH_LONG).show();
         String myParticipantId = currentMatch.getParticipantId(playerId);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -318,7 +368,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 
         TurnBasedMatch match = result.getMatch();
-        if (match.getData() != null) {
+       if (match.getData() != null) {
             // This is a game that has already started, so I'll just start
             updateMatch(match);
             return;
