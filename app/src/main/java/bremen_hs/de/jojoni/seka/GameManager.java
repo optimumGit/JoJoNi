@@ -14,25 +14,29 @@ import java.util.List;
  * 
  */
 public class GameManager {
-	private CardStack cardStack = new CardStack();
-	private List<Player> players = new ArrayList<Player>();
+	private HashMap<String, String> playerList = null;
+	private CardStack cardStack = null;
 	private Pot pot = null;
 
 	public GameManager() {
 		this.pot = new Pot();
+		this.cardStack = new CardStack();
+		this.playerList = new HashMap<String, String>();
+	}
+
+	public HashMap<String, String> getPlayerList(){
+		return this.playerList;
 	}
 	/**
-	 * 
-	 * 
-	 * @param player player
-	 * @return Boolean 
+	 *
+	 * @param playerName
+	 * @param playerID
 	 */
-	public boolean playerJoinGame(Player player){
-		if(players.size() <= 8){
-			players.add(player);
-			return true;
+	public void playerJoinGame(String playerName, String playerID){
+		if(!this.playerList.containsKey(playerID)){
+			this.playerList.put(playerID, playerName);
 		}else{
-			return false;
+			return;
 		}
 	}
     /**
@@ -61,15 +65,6 @@ public class GameManager {
     public void playerCall(Player player){
 
     }
-
-    /**
-	 * 
-	 * 
-	 * @return List<Player> players
-	 */
-	public List<Player> getPlayerList(){
-		return players;
-	}	
 	/**
 	 * 
 	 * 
@@ -104,7 +99,7 @@ public class GameManager {
 		return stack;
 	}
 	
-
+/*
 	public HashMap<Player, Float> results(){
 		Results rs = new Results();
 		HashMap<Player, Float> gameResults = new HashMap<Player, Float>();
@@ -115,16 +110,16 @@ public class GameManager {
 		}
 		return gameResults;
 	}
-
+*/
 	// --------------------test methoden-------------------------
-	
-	public void creatNewPlayer(String name){
-		//Player pl = new Player(name);
-	//	this.playerJoinGame(pl);
-	}
-	
+
 	public float testResult(List<Cards> hand){
 		Results rs = new Results();
 		return rs.results(hand);
+	}
+
+	public String getNameByID(String name){
+		String id = this.playerList.get(name);
+		return id;
 	}
 }

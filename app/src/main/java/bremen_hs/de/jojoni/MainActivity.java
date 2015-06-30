@@ -81,6 +81,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
             Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
+            gameManager.playerJoinGame(Games.Players.getCurrentPlayerId(apiClient), Games.Players.getCurrentPlayer(apiClient).getDisplayName());
         }
     }
 
@@ -513,10 +514,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
     private void playerRaise(){
 
-        //gameManager.playerRais(Player, coins);
+        gameManager.getPlayerList();
 
         Context context = getApplicationContext();
-        CharSequence text = "playerRaise";
+        CharSequence text = gameManager.getPlayerList().get( Games.Players.getCurrentPlayer(apiClient).getPlayerId());
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
@@ -524,7 +525,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
     private void playerCall(){
 
-        //gameManager.playerCall(Player);
+
 
         Context context = getApplicationContext();
         CharSequence text = "playerCall";

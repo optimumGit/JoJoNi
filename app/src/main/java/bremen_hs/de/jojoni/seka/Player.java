@@ -11,14 +11,19 @@ import java.util.Vector;
  */
 
 public class Player {
+
 	private String playerName = null;
     private String playerID   = null;
 	private float playerCoins = 1000; //TODO start coins??
 	private List<Cards> hand  = null;
 	private boolean dealer    = false;
 
+	/**
+	 *
+ 	 * @param playerName
+	 * @param playerID
+	 */
 	public Player(String playerName, String playerID){
-		this.hand = new ArrayList<Cards>();
 		this.playerName = playerName;
         this.playerID   = playerID;
 	}
