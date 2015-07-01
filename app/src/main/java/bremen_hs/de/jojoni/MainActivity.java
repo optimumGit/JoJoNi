@@ -81,7 +81,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
             Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
-            gameManager.playerJoinGame(Games.Players.getCurrentPlayerId(apiClient), Games.Players.getCurrentPlayer(apiClient).getDisplayName());
         }
     }
 
@@ -105,6 +104,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
+        String a = Games.Players.getCurrentPlayerId(apiClient);
+        String b = Games.Players.getCurrentPlayer(apiClient).getDisplayName();
+
+        gameManager.playerJoinGame(Games.Players.getCurrentPlayerId(apiClient), Games.Players.getCurrentPlayer(apiClient).getDisplayName());
+
+
         if(apiClient.isConnected()){
             Games.Invitations.registerInvitationListener(apiClient, this);
             Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
@@ -513,8 +518,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         toast.show();
     }
     private void playerRaise(){
-
-        gameManager.getPlayerList();
 
         Context context = getApplicationContext();
         CharSequence text = gameManager.getPlayerList().get( Games.Players.getCurrentPlayer(apiClient).getPlayerId());

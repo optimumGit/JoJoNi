@@ -34,7 +34,8 @@ public class GameManager {
 	 */
 	public void playerJoinGame(String playerName, String playerID){
 		if(!this.playerList.containsKey(playerID)){
-			this.playerList.put(playerID, playerName);
+			this.playerList.put(playerName, playerID);
+			//Player pl = new Player(playerName, playerID);
 		}else{
 			return;
 		}
