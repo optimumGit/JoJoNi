@@ -55,13 +55,13 @@ public class TurnData {
 
         Log.d(TAG, "====UNPERSIST \n" + st);
 
-        TurnData retVal = new TurnData();
+        TurnData turnData = new TurnData();
 
         try {
             JSONObject obj = new JSONObject(st);
 
             if (obj.has("data")) {
-                retVal.data = obj.getString("data");
+                turnData.data = obj.getString("data");
             }
 
         } catch (JSONException e) {
@@ -69,7 +69,7 @@ public class TurnData {
             e.printStackTrace();
         }
 
-        return retVal;
+        return turnData;
 
     }
 

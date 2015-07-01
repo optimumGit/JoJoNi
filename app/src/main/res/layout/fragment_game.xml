@@ -9,6 +9,7 @@
 
     android:id="@+id/background">
 
+
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,9 +64,10 @@
         android:layout_toRightOf="@+id/fold_button"
         android:layout_toEndOf="@+id/fold_button" />
 
-    <ListView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Hallo"
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"

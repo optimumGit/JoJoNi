@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,6 +45,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final int INVITE_PLAYERS_REQUEST = 10000;
     private static final int SIGN_IN_REQUEST = 9001;
     final static int RC_LOOK_AT_MATCHES = 10001;
+
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
     private TurnBasedMatch currentMatch;
@@ -166,7 +169,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onCallButtonClicked() {
         playerCall();
-        onDoneClicked();
+        buildInputWindow();
     }
 
     @Override
@@ -180,7 +183,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         // Create the next turn
         turnData.setTurn(turnData.getTurn() + 1);
         int turn =  turnData.getTurn();
-        turnData.setData("Turn Nr. " + turn);
 
 
         Games.TurnBasedMultiplayer.takeTurn(apiClient, currentMatch.getMatchId(),
@@ -191,8 +193,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                         processResult(result);
                     }
                 });
-
-        //turnData = null;
+        gameFragment.setListView(turnData.getData());
+        gameFragment.setEnabled(false);
     }
 
     private String getNextParticipantId() {
@@ -327,11 +329,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         switch (turnStatus) {
             case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
                 turnData = turnData.unpersist(currentMatch.getData());
+                gameFragment.setListView(turnData.getData());
                 Toast.makeText(this, "turnData: " + turnData.getData(), Toast.LENGTH_LONG).show();
                 updateUi();
                 return;
             case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
                 // Should return results.
+                gameFragment.setListView(turnData.getData());
                 Toast.makeText(this, "It's not your turn.", Toast.LENGTH_LONG).show();
                 break;
             case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
@@ -384,6 +388,53 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         startMatch(match);
     }
 
+
+    private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+        TurnBasedMatch match= result.getMatch();
+        boolean isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
+
+        if (isDoingTurn) {
+            gameFragment.setEnabled(true);
+            updateMatch(match);
+            return;
+        }
+        updateUi();
+        Toast.makeText(this, "Game updated", Toast.LENGTH_LONG).show();
+    }
+
+    private void updateUi() {
+
+    }
+
+    private void buildInputWindow() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Title");
+        alert.setMessage("Message");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                Editable value = input.getText();
+                turnData.setData(turnData.getData() + value);
+                onDoneClicked();
+            }
+        });
+
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+
+    }
+
     private void showExitAppPopUp() {
 
         AlertDialog.Builder exitPopUp = new AlertDialog.Builder(this);
@@ -394,7 +445,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     public void onClick(DialogInterface dialog, int id) {
                         System.exit(0);
                     }
-                })
+        })
                 .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //Nicht beenden
@@ -441,22 +492,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     }
 
-    private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-        TurnBasedMatch match= result.getMatch();
-        boolean isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
-
-        if (isDoingTurn) {
-            updateMatch(match);
-            return;
-        }
-        updateUi();
-        Toast.makeText(this, "Game updated", Toast.LENGTH_LONG).show();
-    }
-
-    private void updateUi() {
-
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -497,7 +532,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
-
+        gameFragment.setListView(turnData.getData());
+        if(turnBasedMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN){
+            gameFragment.setEnabled(true);
+            updateMatch(turnBasedMatch);
+        }
     }
 
     @Override

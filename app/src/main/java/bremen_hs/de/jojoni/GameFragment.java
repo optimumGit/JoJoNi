@@ -2,17 +2,25 @@ package bremen_hs.de.jojoni;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class GameFragment extends Fragment implements View.OnClickListener {
 
+    private static String TAG = "GAME_FRAGMENT";
+
     MainFragment mainFragment;
+    ImageButton raise_button;
+    ImageButton call_button;
+    ImageButton fold_button;
+    TextView listView;
 
     static int[] BUTTONS = {
             R.id.raise_button, R.id.call_button, R.id.fold_button
@@ -34,6 +42,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         for (int i : BUTTONS) {
             ((ImageButton) v.findViewById(i)).setOnClickListener(this);
         }
+
+        call_button = (ImageButton) v.findViewById(R.id.call_button);
+        fold_button = (ImageButton) v.findViewById(R.id.fold_button);
+        raise_button = (ImageButton) v.findViewById(R.id.raise_button);
+        listView = (TextView) v.findViewById(R.id.listView);
         return v;
 
 
@@ -73,6 +86,18 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 gameListener.onFoldButtonClicked();
                 break;
         }
+    }
+
+    public void setEnabled(boolean enabled){
+        Log.d(TAG, "Buttons enabled" + enabled);
+        raise_button.setEnabled(enabled);
+        fold_button.setEnabled(enabled);
+        call_button.setEnabled(enabled);
+    }
+
+    public void setListView(String text){
+        listView.setText(text);
+
     }
 
     // The functions for the three buttons, implemented by the MainActivity
