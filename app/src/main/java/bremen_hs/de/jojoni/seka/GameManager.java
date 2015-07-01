@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.Objects;
 
 
 /**
@@ -14,18 +14,19 @@ import java.util.List;
  * 
  */
 public class GameManager {
-	private HashMap<String, String> playerList = null;
+	private HashMap<String, Object> gameHistory = null;
 	private CardStack cardStack = null;
+	private Player player = null;
 	private Pot pot = null;
 
 	public GameManager() {
 		this.pot = new Pot();
 		this.cardStack = new CardStack();
-		this.playerList = new HashMap<String, String>();
+		this.gameHistory = new HashMap<String, Object>();
 	}
 
-	public HashMap<String, String> getPlayerList(){
-		return this.playerList;
+	public HashMap<String, Object> getGameHistoryList(){
+		return this.gameHistory;
 	}
 	/**
 	 *
@@ -33,9 +34,9 @@ public class GameManager {
 	 * @param playerID
 	 */
 	public void playerJoinGame(String playerName, String playerID){
-		if(!this.playerList.containsKey(playerID)){
-			this.playerList.put(playerName, playerID);
-			//Player pl = new Player(playerName, playerID);
+		if(!this.gameHistory.containsKey(playerID)){
+			this.gameHistory.put(playerName, "join");
+			player = new Player(playerName, playerID);
 		}else{
 			return;
 		}
@@ -69,7 +70,7 @@ public class GameManager {
 	/**
 	 * 
 	 * 
-	 * @param List<playerList> playerList
+	 * @param list<playerList> playerList
 	 */
 	public void dealCards(List<Player> playerList){//TODO fehler abfangen... java.lang.IndexOutOfBoundsException.... nur 36 karten stack 
 		List<Cards> currentStack = this.shuffle();
@@ -119,8 +120,7 @@ public class GameManager {
 		return rs.results(hand);
 	}
 
-	public String getNameByID(String name){
-		String id = this.playerList.get(name);
-		return id;
+	public Player getPlayer(){
+		return this.player;
 	}
 }

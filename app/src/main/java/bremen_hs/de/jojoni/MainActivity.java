@@ -32,6 +32,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 
 import bremen_hs.de.jojoni.seka.GameManager;
+import bremen_hs.de.jojoni.seka.Player;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
@@ -104,10 +105,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
-        String a = Games.Players.getCurrentPlayerId(apiClient);
-        String b = Games.Players.getCurrentPlayer(apiClient).getDisplayName();
+        String playerID   = Games.Players.getCurrentPlayerId(apiClient);
+        String playerName = Games.Players.getCurrentPlayer(apiClient).getDisplayName();
 
-        gameManager.playerJoinGame(Games.Players.getCurrentPlayerId(apiClient), Games.Players.getCurrentPlayer(apiClient).getDisplayName());
+        gameManager.playerJoinGame(playerName, playerID);
 
 
         if(apiClient.isConnected()){
@@ -518,9 +519,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         toast.show();
     }
     private void playerRaise(){
-
+        Player pl = gameManager.getPlayer();
         Context context = getApplicationContext();
-        CharSequence text = gameManager.getPlayerList().get( Games.Players.getCurrentPlayer(apiClient).getPlayerId());
+        CharSequence text = pl.getPlayerName() + " : " + pl.getPlayerID();
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
