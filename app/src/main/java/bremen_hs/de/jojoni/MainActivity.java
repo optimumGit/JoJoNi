@@ -11,9 +11,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -436,45 +441,67 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void showExitAppPopUp() {
+        AlertDialog.Builder exitPopUpBuilder = new AlertDialog.Builder(this);
 
-        AlertDialog.Builder exitPopUp = new AlertDialog.Builder(this);
-        exitPopUp.setTitle("App Beenden");
-        exitPopUp.setMessage("Möchsten Sie das Spiel beenden?");
+        LayoutInflater inflater = this.getLayoutInflater();
 
-        exitPopUp.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        System.exit(0);
-                    }
-        })
-                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //Nicht beenden
-                    }
-                });
+        View view = inflater.inflate(R.layout.exit_app_popup, null);
+        exitPopUpBuilder.setView(view);
 
-        AlertDialog PopUp = exitPopUp.create();
+        final AlertDialog PopUp = exitPopUpBuilder.create();
+
+        ImageButton btnExit = (ImageButton)view.findViewById(R.id.btnExitApp);
+        btnExit.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                System.exit(0);
+                PopUp.dismiss();
+            }
+        });
+
+        ImageButton btnDontExit = (ImageButton)view.findViewById(R.id.btnDontExitApp);
+        btnDontExit.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                PopUp.dismiss();
+            }
+        });
+
         PopUp.show();
     }
 
 
     private void showExitGamePopUp() {
+        AlertDialog.Builder exitPopUpBuilder = new AlertDialog.Builder(this);
 
-        AlertDialog.Builder exitPopUp = new AlertDialog.Builder(this);
-        exitPopUp.setTitle("Partie Beenden");
-        exitPopUp.setMessage("Möchten Sie diese Partie beenden?");
+        LayoutInflater inflater = this.getLayoutInflater();
 
-        exitPopUp.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
-                    }
-                })
-                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        //Nicht beenden
-                    }
-                });
+        View view = inflater.inflate(R.layout.exit_game_popup, null);
+        exitPopUpBuilder.setView(view);
 
-        AlertDialog PopUp = exitPopUp.create();
+        final AlertDialog PopUp = exitPopUpBuilder.create();
+
+        ImageButton btnExit = (ImageButton)view.findViewById(R.id.btnExitGame);
+        btnExit.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+                PopUp.dismiss();
+            }
+        });
+
+        ImageButton btnDontExit = (ImageButton)view.findViewById(R.id.btnDontExitGame);
+        btnDontExit.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                PopUp.dismiss();
+            }
+        });
+
         PopUp.show();
     }
 

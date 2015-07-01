@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300sp"
+    android:layout_height="200sp"
+    android:background="@drawable/background_horizontal">
+
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnExitApp"
+        android:background="@drawable/button_ja"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10sp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="110sp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDontExitApp"
+        android:background="@drawable/button_nein"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10sp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="110sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgVwExitApp"
+        android:background="@drawable/button_spiel_beenden"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20sp" />
+
+</RelativeLayout>

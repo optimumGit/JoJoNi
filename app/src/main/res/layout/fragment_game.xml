@@ -43,26 +43,27 @@
         android:id="@+id/imageView"
         android:background="@drawable/deckblatt"
         android:layout_above="@+id/raise_button"
-        android:layout_toLeftOf="@+id/call_button"
-        android:layout_toStartOf="@+id/fold_button"
-        android:layout_marginBottom="40dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="20sp" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView2"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/deckblatt" />
+        android:background="@drawable/deckblatt"
+        android:layout_alignTop="@+id/imageView3"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView3"
         android:background="@drawable/deckblatt"
-        android:layout_alignTop="@+id/imageView2"
-        android:layout_toRightOf="@+id/fold_button"
-        android:layout_toEndOf="@+id/fold_button" />
+        android:layout_above="@+id/call_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="20sp" />
 
     <TextView
         android:layout_width="wrap_content"
