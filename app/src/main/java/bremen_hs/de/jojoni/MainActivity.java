@@ -123,6 +123,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Games.Invitations.registerInvitationListener(apiClient, this);
             Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
         }
+
         if (currentMatch != null) {
             if (apiClient == null || !apiClient.isConnected()) {
                 Log.d(TAG, "Warning: accessing TurnBasedMatch when not connected");
