@@ -60,6 +60,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final int INVITE_PLAYERS_REQUEST = 10000;
     private static final int SIGN_IN_REQUEST = 9001;
     final static int WAITING_ROOM_REQUEST = 10001;
+    final static int RC_INVITATION_INBOX = 20000;
 
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
@@ -131,13 +132,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
-        String playerID   = Games.Players.getCurrentPlayerId(apiClient);
+        String playerID = Games.Players.getCurrentPlayerId(apiClient);
         String playerName = Games.Players.getCurrentPlayer(apiClient).getDisplayName();
 
         gameManager.playerJoinGame(playerName, playerID);
 
 
-        if(apiClient.isConnected()){
+        if (apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
         }
 
@@ -146,6 +147,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 Log.d(TAG, "Warning: accessing TurnBasedMatch when not connected");
             }
             return;
+        }
+
+        if (bundle != null) {
+            Invitation inv =
+                    bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
+
+            if (inv != null) {
+                acceptInvitation(inv);
+            }
         }
     }
 
@@ -201,13 +211,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     public void onDoneClicked() {
     // Increment turn number
+        Log.d(TAG, "DoneClicked");
         mMatchTurnNumber = mMatchTurnNumber + 1;
         sendReliableMessageToOthers(turnData.persist());
 
     }
 
     private void sendReliableMessageToOthers(byte[] data) {
+        Log.d(TAG, "sendRliableMessage");
         for (Player participant : mParticipants.values()) {
+            Log.d(TAG, "reliablemessage to:" + participant.getPlayerName());
             Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                     data, mRoom.getRoomId(), participant.getPlayerID());
         }
@@ -222,7 +235,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onJoinGameClicked() {
-        //onCheckGamesClicked();
+        onCheckGamesClicked();
+    }
+
+    private void onCheckGamesClicked() {
+        Intent intent = Games.Invitations.getInvitationInboxIntent(apiClient);
+        startActivityForResult(intent, RC_INVITATION_INBOX);
     }
 
     @Override
@@ -245,7 +263,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         super.onActivityResult(request, response, data);
         if( request == SIGN_IN_REQUEST){
             apiClient.connect();
-        } else if (request == WAITING_ROOM_REQUEST) {
+        }
+        if (request == RC_INVITATION_INBOX) {
+            if (response != Activity.RESULT_OK) {
+                // canceled
+                return;
+            }
+
+            // get the selected invitation
+            Bundle extras = data.getExtras();
+            Invitation invitation = extras.getParcelable(Multiplayer.EXTRA_INVITATION);
+            if(invitation != null) {
+                acceptInvitation(invitation);
+            }
+        }
+        if (request == WAITING_ROOM_REQUEST) {
             // Coming back from a RealTime Multiplayer waiting room
 
                 Room room = data.getParcelableExtra(Multiplayer.EXTRA_ROOM);
@@ -276,7 +308,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     .setMessageReceivedListener(this)
                     .setRoomStatusUpdateListener(this);
 
-
             // Set the invitees
             final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
             if (invitees != null && invitees.size() > 0) {
@@ -291,6 +322,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void leaveRoom() {
         if (mRoom != null) {
             Games.RealTimeMultiplayer.leave(apiClient, this, mRoom.getRoomId());
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
             mRoom = null;
         }
     }
@@ -300,6 +332,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         // Some basic turn data
         turnData.setData("First turn");
 
+        for(String id : mRoom.getParticipantIds()){
+            Player p = new Player(mRoom.getParticipant(id));
+            mParticipants.put(id, p);
+            Toast.makeText(this, "Player: " + p.getPlayerName(),Toast.LENGTH_LONG);
+        }
         // TODO: Karten austeilen
         sendReliableMessageToOthers(turnData.persist());
         FragmentManager fragmentManager = getFragmentManager();
@@ -309,7 +346,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
-        //updateUi();
     }
 
 
@@ -423,9 +459,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
                 .setMessageReceivedListener(this)
                 .setRoomStatusUpdateListener(this)
-                .setInvitationIdToAccept(invitation.getInvitationId());
+                .setInvitationIdToAccept(invitation.getInvitationId())
+                .setMessageReceivedListener(this);
+
 
         Games.RealTimeMultiplayer.join(apiClient, roomConfigBuilder.build());
+
+        //updateUi();
     }
 
     @Override
@@ -464,7 +504,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
         getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
-        updateUi();
+        //updateUi();
     }
 
     @Override
@@ -485,7 +525,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
+        Toast.makeText(this, "Called", Toast.LENGTH_LONG);
         byte[] data = realTimeMessage.getMessageData();
+        Toast.makeText(this, data.toString(), Toast.LENGTH_LONG);
+
         onMessageReceived(data);
 
     }
@@ -639,7 +682,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         btnExit.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                leaveRoom();
+                System.exit(0);
                 PopUp.dismiss();
             }
         });
@@ -671,7 +714,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             @Override
             public void onClick(View v) {
                 leaveRoom();
-                getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
                 PopUp.dismiss();
             }
         });
