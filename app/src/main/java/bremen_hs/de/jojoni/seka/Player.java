@@ -1,5 +1,7 @@
 package bremen_hs.de.jojoni.seka;
 
+import com.google.android.gms.games.multiplayer.Participant;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -17,6 +19,15 @@ public class Player {
 	private float playerCoins = 1000; //TODO start coins??
 	private List<Cards> hand  = null;
 	private boolean dealer    = false;
+
+	/**
+	 *
+	 * @param p
+	 */
+	public Player(Participant p){
+		this.playerID   = p.getParticipantId();
+		this.playerName = p.getDisplayName();
+	}
 
 	/**
 	 *

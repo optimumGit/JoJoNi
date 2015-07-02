@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 /**
  * Created by johan_000 on 02.06.2015.
@@ -75,6 +76,28 @@ public class TurnData {
         return turnData;
 
     }
+
+    public byte[] dealCards(ArrayList<Integer> cards){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("first card typ",    cards.get(0));
+            json.put("first card count",  cards.get(1));
+            json.put("second card typ",   cards.get(2));
+            json.put("second card count", cards.get(3));
+            json.put("third card typ",    cards.get(4));
+            json.put("third card count",  cards.get(5));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String st = json.toString();
+
+        Log.d(TAG, "==== PERSISTING\n" + st);
+
+        return st.getBytes(Charset.forName("UTF-8"));
+    }
+
 
     public String getData() {
         return playerName;
