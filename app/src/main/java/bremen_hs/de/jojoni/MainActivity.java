@@ -14,47 +14,66 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
-import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
+import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
+import com.google.android.gms.games.multiplayer.realtime.RealTimeMultiplayer;
+import com.google.android.gms.games.multiplayer.realtime.Room;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
+import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 import bremen_hs.de.jojoni.seka.GameManager;
 import bremen_hs.de.jojoni.seka.Player;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainListener,
-        GameFragment.GameListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
+        GameFragment.GameListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        OnInvitationReceivedListener,
+        RoomUpdateListener,
+        RealTimeMessageReceivedListener,
+        RoomStatusUpdateListener {
 
     private static final String TAG = "SekaCardGame";
     private static final int INVITE_PLAYERS_REQUEST = 10000;
     private static final int SIGN_IN_REQUEST = 9001;
-    final static int RC_LOOK_AT_MATCHES = 10001;
+    final static int WAITING_ROOM_REQUEST = 10001;
 
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
-    private TurnBasedMatch currentMatch;
-    private TurnData turnData;
+    private RealTimeMultiplayer currentMatch;
+    private TurnData turnData = new TurnData();
+    private HashMap<String, Player> mParticipants = new HashMap<>();
+    private Room mRoom;
+    private AlertDialog mAlertDialog;
+    // The match turn number, monotonically increasing from 0
+    private int mMatchTurnNumber = 0;
+    // It is the player's turn when (match turn number % num participants == my turn index)
+    private int mMyTurnIndex;
+
+    private String mMyPersistentId;
 
     private GoogleApiClient apiClient;
 
@@ -89,7 +108,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
-            Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
         }
     }
 
@@ -121,14 +139,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         if(apiClient.isConnected()){
             Games.Invitations.registerInvitationListener(apiClient, this);
-            Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiClient, this);
         }
 
         if (currentMatch != null) {
             if (apiClient == null || !apiClient.isConnected()) {
                 Log.d(TAG, "Warning: accessing TurnBasedMatch when not connected");
             }
-            updateMatch(currentMatch);
             return;
         }
     }
@@ -184,52 +200,19 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     public void onDoneClicked() {
+    // Increment turn number
+        mMatchTurnNumber = mMatchTurnNumber + 1;
+        sendReliableMessageToOthers(turnData.persist());
 
-        String nextParticipantId = getNextParticipantId();
-        // Create the next turn
-        turnData.setTurn(turnData.getTurn() + 1);
-        int turn =  turnData.getTurn();
-
-
-        Games.TurnBasedMultiplayer.takeTurn(apiClient, currentMatch.getMatchId(),
-                turnData.persist(), nextParticipantId).setResultCallback(
-                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        processResult(result);
-                    }
-                });
-        gameFragment.setListView(turnData.getData());
-        gameFragment.setEnabled(false);
     }
 
-    private String getNextParticipantId() {
-        String playerId = Games.Players.getCurrentPlayerId(apiClient);
-        String myParticipantId = currentMatch.getParticipantId(playerId);
-
-        ArrayList<String> participantIds = currentMatch.getParticipantIds();
-
-        int desiredIndex = -1;
-
-        for (int i = 0; i < participantIds.size(); i++) {
-            if (participantIds.get(i).equals(myParticipantId)) {
-                desiredIndex = i + 1;
-            }
-        }
-
-        if (desiredIndex < participantIds.size()) {
-            return participantIds.get(desiredIndex);
-        }
-
-        if (currentMatch.getAvailableAutoMatchSlots() <= 0) {
-            // You've run out of automatch slots, so we start over.
-            return participantIds.get(0);
-        } else {
-            // You have not yet fully automatched, so null will find a new
-            // person to play against.
-            return null;
+    private void sendReliableMessageToOthers(byte[] data) {
+        for (Player participant : mParticipants.values()) {
+            Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                    data, mRoom.getRoomId(), participant.getPlayerID());
         }
     }
+
 
     // implementing the mainFragment interface
     @Override
@@ -239,7 +222,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onJoinGameClicked() {
-        onCheckGamesClicked();
+        //onCheckGamesClicked();
     }
 
     @Override
@@ -247,16 +230,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
     }
 
-    public void onCheckGamesClicked() {
-        Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiClient);
-        startActivityForResult(intent, RC_LOOK_AT_MATCHES);
-    }
-
     // Instantiate a new TurnBasedMatch - Getting to the Lobby
     private void onStartMatchClicked() {
         int minPlayers = 1;
         int maxPlayers = 8;
-        Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(apiClient,
+        Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(apiClient,
                 minPlayers, maxPlayers, true);
         startActivityForResult(intent, INVITE_PLAYERS_REQUEST);
     }
@@ -267,22 +245,25 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         super.onActivityResult(request, response, data);
         if( request == SIGN_IN_REQUEST){
             apiClient.connect();
-        } else if (request == RC_LOOK_AT_MATCHES) {
-            // Returning from the 'Select Match' dialog
+        } else if (request == WAITING_ROOM_REQUEST) {
+            // Coming back from a RealTime Multiplayer waiting room
 
-            if (response != Activity.RESULT_OK) {
-                // user canceled
-                return;
+                Room room = data.getParcelableExtra(Multiplayer.EXTRA_ROOM);
+                if (response == RESULT_OK) {
+                    Log.d(TAG, "Waiting Room: Success");
+                    mRoom = room;
+                    startMatch();
+                } else if (response == RESULT_CANCELED) {
+                    Log.d(TAG, "Waiting Room: Canceled");
+                    leaveRoom();
+                } else if (response == GamesActivityResultCodes.RESULT_LEFT_ROOM) {
+                    Log.d(TAG, "Waiting Room: Left Room");
+                    leaveRoom();
+                } else if (response == GamesActivityResultCodes.RESULT_INVALID_ROOM) {
+                    Log.d(TAG, "Waiting Room: Invalid Room");
+                    leaveRoom();
+                }
             }
-
-            TurnBasedMatch match = data
-                    .getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
-
-            if (match != null) {
-                getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
-               updateMatch(match);
-            }
-        }
         if (request == INVITE_PLAYERS_REQUEST) {
             if (response != Activity.RESULT_OK) {
                 // user canceled
@@ -290,127 +271,330 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 return;
             }
 
-            // get the invitee list
-            final ArrayList<String> invitees = data
-                    .getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+            // Create a basic room configuration
+            RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                    .setMessageReceivedListener(this)
+                    .setRoomStatusUpdateListener(this);
 
-            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                    .addInvitedPlayers(invitees).build();
 
-            // Start the match
-            Games.TurnBasedMultiplayer.createMatch(apiClient, tbmc).setResultCallback(
-                    new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-                        @Override
-                        public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-                                processResult(result);
-                        }
-                    });
+            // Set the invitees
+            final ArrayList<String> invitees = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+            if (invitees != null && invitees.size() > 0) {
+                roomConfigBuilder.addPlayersToInvite(invitees);
+            }
+
+            // Build the room and start the match
+            Games.RealTimeMultiplayer.create(apiClient, roomConfigBuilder.build());
         }
     }
 
-    private void updateMatch(TurnBasedMatch match) {
-        currentMatch = match;
-
-        int status = match.getStatus();
-        int turnStatus = match.getTurnStatus();
-
-        switch (status) {
-            case TurnBasedMatch.MATCH_STATUS_CANCELED:
-                Toast.makeText(this, "Canceled!", Toast.LENGTH_LONG).show();
-                return;
-            case TurnBasedMatch.MATCH_STATUS_EXPIRED:
-                Toast.makeText(this, "Expired!", Toast.LENGTH_LONG).show();
-                return;
-            case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
-                Toast.makeText(this, "Waiting for auto-match...", Toast.LENGTH_LONG).show();
-                return;
-            case TurnBasedMatch.MATCH_STATUS_COMPLETE:
-                if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE) {
-                    Toast.makeText(this, "Complete! This game is over", Toast.LENGTH_LONG).show();
-                    break;
-                }
+    private void leaveRoom() {
+        if (mRoom != null) {
+            Games.RealTimeMultiplayer.leave(apiClient, this, mRoom.getRoomId());
+            mRoom = null;
         }
-
-        // OK, it's active. Check on turn status.
-        switch (turnStatus) {
-            case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
-                turnData = turnData.unpersist(currentMatch.getData());
-                gameFragment.setListView(turnData.getData());
-                Toast.makeText(this, "turnData: " + turnData.getData(), Toast.LENGTH_LONG).show();
-                updateUi();
-                return;
-            case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
-                // Should return results.
-                gameFragment.setListView(turnData.getData());
-                Toast.makeText(this, "It's not your turn.", Toast.LENGTH_LONG).show();
-                break;
-            case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
-                Toast.makeText(this, "Good inititative! Still waiting for invitations.\n\nBe patient!", Toast.LENGTH_LONG).show();
-        }
-
-     //   turnData = null;
-
-
     }
 
-    private void startMatch(TurnBasedMatch match) {
+    private void startMatch() {
         turnData = new TurnData();
         // Some basic turn data
         turnData.setData("First turn");
 
-        currentMatch = match;
-
-        String playerId = Games.Players.getCurrentPlayerId(apiClient);
-        String myParticipantId = currentMatch.getParticipantId(playerId);
-
+        // TODO: Karten austeilen
+        sendReliableMessageToOthers(turnData.persist());
         FragmentManager fragmentManager = getFragmentManager();
 
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.fragment, gameFragment);
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.fragment, gameFragment);
 
-            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            ft.commit();
-
-        Games.TurnBasedMultiplayer.takeTurn(apiClient, match.getMatchId(),
-                turnData.persist(), myParticipantId).setResultCallback(
-                new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-                    @Override
-                    public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-                        processResult(result);
-                    }
-                });
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+        //updateUi();
     }
 
-    // Start a new Match
-    private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 
-        TurnBasedMatch match = result.getMatch();
-       if (match.getData() != null) {
-            // This is a game that has already started, so I'll just start
-            updateMatch(match);
-            return;
+    private boolean isMyTurn() {
+        int numParticipants = mParticipants.size();
+        if (numParticipants == 0) {
+            Log.w(TAG, "isMyTurn: no participants - default to true.");
+            return true;
         }
-        Toast.makeText(this, "Game started", Toast.LENGTH_LONG).show();
-        startMatch(match);
+        int participantTurnIndex = mMatchTurnNumber % numParticipants;
+
+        Log.d(TAG, String.format("isMyTurn: %d participants, turn #%d, my turn is #%d",
+                numParticipants, mMatchTurnNumber, mMyTurnIndex));
+        return (mMyTurnIndex == participantTurnIndex);
     }
 
 
-    private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-        TurnBasedMatch match= result.getMatch();
-        boolean isDoingTurn = (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN);
-
-        if (isDoingTurn) {
-            gameFragment.setEnabled(true);
-            updateMatch(match);
-            return;
-        }
-        updateUi();
-        Toast.makeText(this, "Game updated", Toast.LENGTH_LONG).show();
-    }
 
     private void updateUi() {
+        gameFragment.setEnabled(isMyTurn());
+    }
+
+
+
+    /**
+     * RTMP Participant joined, register the DrawingParticipant if the Participant is connected.
+     * @param p the Participant from the Real-Time Multiplayer match.
+     */
+    private void onParticipantConnected(Participant p) {
+        if (p.isConnectedToRoom()) {
+            onParticipantConnected(new Player(p));
+        }
+    }
+
+    /**
+     * Add a DrawingParticipant to the ongoing game and update turn order. If the
+     * DrawingParticipant is a duplicate, this method does nothing.
+     * @param dp the DrawingParticipant to add.
+     */
+    private void onParticipantConnected(Player dp) {
+        Log.d(TAG, "onParticipantConnected: " + dp.getPlayerID());
+        if (!mParticipants.containsKey(dp.getPlayerID())) {
+            mParticipants.put(dp.getPlayerID(), dp);
+        }
+
+        updateTurnIndices();
+        //updateViewVisibility();
+    }
+
+    private void updateTurnIndices() {
+        // Turn order is determined by sorting participant IDs, which are consistent across
+        // devices (but not across sessions)
+        ArrayList<String> ids = new ArrayList<>();
+        ids.addAll(mParticipants.keySet());
+        Collections.sort(ids);
+
+        // Get your turn order
+        mMyTurnIndex = ids.indexOf(mMyPersistentId);
+        Log.d(TAG, "My turn index: " + mMyTurnIndex);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onInvitationReceived(final Invitation invitation) {
+        final String inviterName = invitation.getInviter().getDisplayName();
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this)
+                .setTitle("Invitation")
+                .setMessage("Would you like to play a new game with " + inviterName + "?")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Games.RealTimeMultiplayer.declineInvitation(apiClient,
+                                invitation.getInvitationId());
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        acceptInvitation(invitation);
+                    }
+                });
+
+        mAlertDialog = alertDialogBuilder.create();
+        mAlertDialog.show();
+    }
+
+    private void acceptInvitation(Invitation invitation) {
+        RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
+                .setMessageReceivedListener(this)
+                .setRoomStatusUpdateListener(this)
+                .setInvitationIdToAccept(invitation.getInvitationId());
+
+        Games.RealTimeMultiplayer.join(apiClient, roomConfigBuilder.build());
+    }
+
+    @Override
+    public void onInvitationRemoved(String s) {
+        // The invitation is no longer valid, so dismiss the dialog asking if they'd like to
+        // accept and show a Toast.
+        if (mAlertDialog.isShowing()) {
+            mAlertDialog.dismiss();
+        }
+
+
+        Toast.makeText(this, "The invitation was removed.", Toast.LENGTH_SHORT).show();
+    }
+
+
+
+    @Override
+    public void onRoomCreated(int statusCode, Room room) {
+        Log.d(TAG, "onRoomCreated: " + statusCode + ":" + room);
+        if (statusCode != GamesStatusCodes.STATUS_OK) {
+            Log.w(TAG, "Error in onRoomCreated: " + statusCode);
+            Toast.makeText(this, "Error creating room.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showWaitingRoom(room);
+    }
+
+    private void showWaitingRoom(Room room) {
+        // Require all players to join before starting
+        final int MIN_PLAYERS = Integer.MAX_VALUE;
+
+        Intent i = Games.RealTimeMultiplayer.getWaitingRoomIntent(apiClient, room, MIN_PLAYERS);
+        startActivityForResult(i, WAITING_ROOM_REQUEST);
+    }
+
+    @Override
+    public void onJoinedRoom(int statusCode, Room room) {
+        getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
+        updateUi();
+    }
+
+    @Override
+    public void onLeftRoom(int statusCode, String s) {
+        mRoom = null;
+        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+    }
+
+    @Override
+    public void onRoomConnected(int statusCode, Room room) {
+        Log.d(TAG, "onRoomConnected: " + statusCode + ":" + room);
+        if (statusCode != GamesStatusCodes.STATUS_OK) {
+            Log.w(TAG, "Error in onRoomConnected: " + statusCode);
+            return;
+        }
+        mRoom = room;
+    }
+
+    @Override
+    public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
+        byte[] data = realTimeMessage.getMessageData();
+        onMessageReceived(data);
 
     }
+
+    private void onMessageReceived(byte[] data) {
+        turnData = turnData.unpersist(data);
+
+        gameFragment.listView.setText(turnData.getData());
+        updateUi();
+    }
+
+    @Override
+    public void onRoomConnecting(Room room) {
+
+    }
+
+    @Override
+    public void onRoomAutoMatching(Room room) {
+
+    }
+
+    @Override
+    public void onPeerInvitedToRoom(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onPeerDeclined(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onPeerJoined(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onPeerLeft(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onConnectedToRoom(Room room) {
+        mRoom = room;
+
+        // Add self to participants
+        mMyPersistentId = mRoom.getParticipantId(Games.Players.getCurrentPlayerId(apiClient));
+        Participant me = mRoom.getParticipant(mMyPersistentId);
+        onParticipantConnected(me);
+        updateTurnIndices();
+    }
+
+    @Override
+    public void onDisconnectedFromRoom(Room room) {
+        leaveRoom();
+    }
+
+    @Override
+    public void onPeersConnected(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onPeersDisconnected(Room room, List<String> list) {
+
+    }
+
+    @Override
+    public void onP2PConnected(String s) {
+
+    }
+
+    @Override
+    public void onP2PDisconnected(String s) {
+
+    }
+
+    //******************* spiel logik************************
+    //TODO player object mit uebergeben
+    private void playerFold(){
+
+        //gameManager.playerFold(Player);
+
+        Context context = getApplicationContext();
+        CharSequence text = "playerFold";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+    private void playerRaise(){
+        Player pl = gameManager.getPlayer();
+        Context context = getApplicationContext();
+        CharSequence text = pl.getPlayerName() + " : " + pl.getPlayerID();
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+    private void playerCall(){
+
+        Context context = getApplicationContext();
+        CharSequence text = "playerCall";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
 
     private void buildInputWindow() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -455,8 +639,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         btnExit.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                System.exit(0);
+                leaveRoom();
                 PopUp.dismiss();
             }
         });
@@ -465,7 +648,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         btnDontExit.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 PopUp.dismiss();
             }
         });
@@ -488,7 +670,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         btnExit.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+                leaveRoom();
                 getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
                 PopUp.dismiss();
             }
@@ -498,11 +680,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         btnDontExit.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 PopUp.dismiss();
             }
         });
-
         PopUp.show();
     }
 
@@ -512,97 +692,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             showExitAppPopUp();
         }
         else if (gameFragment.isVisible()){
-
             showExitGamePopUp();
-
-
         }
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public void onInvitationReceived(Invitation invitation) {
-        Toast.makeText(
-                this,
-                "An invitation has arrived from "
-                        + invitation.getInviter().getDisplayName(), Toast.LENGTH_LONG)
-                .show();
-
-    }
-
-    @Override
-    public void onInvitationRemoved(String s) {
-
-    }
-
-    @Override
-    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
-        gameFragment.setListView(turnData.getData());
-        if(turnBasedMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN){
-            gameFragment.setEnabled(true);
-            updateMatch(turnBasedMatch);
-        }
-    }
-
-    @Override
-    public void onTurnBasedMatchRemoved(String s) {
-
-    }
-
-    //******************* spiel logik************************
-    //TODO player object mit uebergeben
-    private void playerFold(){
-
-        //gameManager.playerFold(Player);
-
-        Context context = getApplicationContext();
-        CharSequence text = "playerFold";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-    private void playerRaise(){
-        Player pl = gameManager.getPlayer();
-        Context context = getApplicationContext();
-        CharSequence text = pl.getPlayerName() + " : " + pl.getPlayerID();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-    private void playerCall(){
-
-
-
-        Context context = getApplicationContext();
-        CharSequence text = "playerCall";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
 }

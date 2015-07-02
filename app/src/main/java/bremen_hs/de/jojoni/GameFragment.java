@@ -90,9 +90,15 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     public void setEnabled(boolean enabled){
         Log.d(TAG, "Buttons enabled" + enabled);
-        raise_button.setEnabled(enabled);
-        fold_button.setEnabled(enabled);
-        call_button.setEnabled(enabled);
+        if(!enabled) {
+            raise_button.setVisibility(View.INVISIBLE);
+            fold_button.setVisibility(View.INVISIBLE);
+            call_button.setVisibility(View.INVISIBLE);
+        } else {
+            raise_button.setVisibility(View.VISIBLE);
+            fold_button.setVisibility(View.VISIBLE);
+            call_button.setVisibility(View.VISIBLE);
+        }
     }
 
     public void setListView(String text){
