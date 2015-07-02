@@ -33,7 +33,11 @@ public class Pot {
 	public HashMap<Player, Float> getPotHistory() {
 		return this.potHistory;
 	}
-	
+
+	/**
+	 *
+	 * @param potHistory
+	 */
 	public void setPotHistory(HashMap<Player, Float> potHistory) {
 		this.potHistory = potHistory;
 	}

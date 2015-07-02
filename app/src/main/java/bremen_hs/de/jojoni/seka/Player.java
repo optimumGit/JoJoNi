@@ -100,11 +100,4 @@ public class Player {
             return 0;//TODO
         }
     }
-
-	//Eine Karte waehlen, die anstatt den Jocker sein wird.
-/**	public Cards chosseJocker(){
-		return null;
-	}
-*/
-
 }

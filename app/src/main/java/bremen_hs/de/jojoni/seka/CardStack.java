@@ -13,7 +13,10 @@ import java.util.List;
 public class CardStack {
 	
 	private List<Cards> stack = null;
-	
+
+	/**
+	 *
+	 */
 	public CardStack(){
 		stack = new ArrayList<Cards>();
 		this.newStack();
@@ -31,12 +34,11 @@ public class CardStack {
 	 * Creat new stack
 	 *  
 	 */
-	private void newStack(){
-		 for(int x = 0; x <= 3; x++){
-			 for(int y = 0; y <= 8; y++){
-				 this.stack.add(new Cards(x,y));
-			 }
-		 }
+	private void newStack() {
+		for (int x = 0; x <= 3; x++) {
+			for (int y = 0; y <= 8; y++) {
+				this.stack.add(new Cards(x, y));
+			}
+		}
 	}
-	
 }

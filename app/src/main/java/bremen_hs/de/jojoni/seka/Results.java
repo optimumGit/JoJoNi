@@ -16,7 +16,12 @@ public class Results {
 	public Results() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
+	/**
+	 *
+	 * @param hand
+	 * @return
+	 */
 	public float results(List<Cards> hand){
 		ArrayList<Float> results = new ArrayList<Float>();
 		results.add(this.highestCard(hand));

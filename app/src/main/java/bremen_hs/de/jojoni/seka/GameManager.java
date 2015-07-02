@@ -1,10 +1,9 @@
 package bremen_hs.de.jojoni.seka;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+
 
 
 /**
@@ -21,7 +20,7 @@ public class GameManager {
 
 	public GameManager() {
 		this.pot = new Pot();
-		this.cardStack = new CardStack();
+		this.cardStack   = new CardStack();
 		this.gameHistory = new HashMap<String, Object>();
 	}
 
