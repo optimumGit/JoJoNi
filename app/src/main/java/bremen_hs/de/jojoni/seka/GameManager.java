@@ -1,5 +1,7 @@
 package bremen_hs.de.jojoni.seka;
 
+import com.google.android.gms.games.multiplayer.Participant;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,22 @@ public class GameManager {
 	public HashMap<String, Object> getGameHistoryList(){
 		return this.gameHistory;
 	}
+
+	/**
+	 *
+	 * @param playerName
+	 * @param playerID
+	 */
+	public void playerJoinGame(Participant participent){
+		if(!this.gameHistory.containsKey(participent.getParticipantId())){
+			this.gameHistory.put(participent.getDisplayName(), "join");
+			player = new Player(participent);
+		}else{
+			return;
+		}
+	}
+
+
 	/**
 	 *
 	 * @param playerName
