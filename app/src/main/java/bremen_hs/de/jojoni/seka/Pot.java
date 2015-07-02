@@ -47,6 +47,7 @@ public class Pot {
 	 * @param coins
 	 */
 	public void playerRais(Player player, float coins){
+
 		this.pot =+ coins;
         this.lastRaise = coins;
 		writeToHistory(player, coins);

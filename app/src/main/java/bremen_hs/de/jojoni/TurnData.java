@@ -13,8 +13,10 @@ import java.nio.charset.Charset;
  */
 public class TurnData {
 
-    private final String TAG = "TurnData";
-    private String data;
+    private final String TAG     = "TurnData";
+    private String playerName    = null;
+    private String playerAction  = null;
+    private float playerSetCoins = 0;
     private int turn = 0;
 
     public TurnData(){
@@ -25,8 +27,9 @@ public class TurnData {
     public byte[] persist(){
         JSONObject json = new JSONObject();
         try {
-            json.put("data", data);
-
+            json.put("player name",      playerName);
+            json.put("player action",    playerAction);
+            json.put("player set coins", playerSetCoins);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -61,7 +64,7 @@ public class TurnData {
             JSONObject obj = new JSONObject(st);
 
             if (obj.has("data")) {
-                turnData.data = obj.getString("data");
+                turnData.playerName = obj.getString("data");
             }
 
         } catch (JSONException e) {
@@ -74,11 +77,11 @@ public class TurnData {
     }
 
     public String getData() {
-        return data;
+        return playerName;
     }
 
     public void setData(String data) {
-        this.data = data;
+        this.playerName = data;
     }
 
     public int getTurn() {

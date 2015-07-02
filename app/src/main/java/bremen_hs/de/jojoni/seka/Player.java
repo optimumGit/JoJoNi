@@ -53,8 +53,12 @@ public class Player {
      *
      * @return
      */
-    public float getCoinsCount(){
-		return this.playerCoins;
+    public float getCoinsCount(float coins){
+		if(this.playerCoins >= coins){
+			return this.playerCoins;
+		}else{
+			return 0;
+		}
 	}
     /**
      *
