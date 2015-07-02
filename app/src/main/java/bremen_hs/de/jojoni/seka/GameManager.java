@@ -47,7 +47,6 @@ public class GameManager {
      * @param coins
      */
     public void playerRais(Player player, float coins){
-        //TODO hier überprüfen ob der player genug coins hat?!
         this.pot.playerRais(player, coins);
     }
     /**
@@ -64,8 +63,12 @@ public class GameManager {
      * @param player
      */
     public void playerCall(Player player){
-
+		this.pot.playerCall(player);
     }
+
+	public void playerWin(float coins){
+		this.player.winCoints(coins);
+	}
 	/**
 	 * 
 	 * 
@@ -87,6 +90,10 @@ public class GameManager {
 			}
 			y = 0;
 		}
+	}
+
+	public float getPotSize(){
+		return this.pot.getPotSize();
 	}
 
 	/**

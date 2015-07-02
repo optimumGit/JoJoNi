@@ -30,13 +30,6 @@ public class Player {
 
     /**
      *
-     * @param dealerButton
-     */
-	public void setDealer(boolean dealerButton){
-		this.dealer = dealerButton;
-	}
-    /**
-     *
      * @return
      */
 	public String getPlayerName(){
@@ -49,25 +42,24 @@ public class Player {
     public String getPlayerID(){
         return this.playerID;
     }
-    /**
-     *
-     * @return
-     */
-    public float getCoinsCount(float coins){
-		if(this.playerCoins >= coins){
-			return this.playerCoins;
-		}else{
-			return 0;
-		}
-	}
-    /**
+
+	/**
      *
      * @return
      */
 	public List<Cards> getHand(){
 		return this.hand;
 	}
-    /**
+
+	/**
+	 *
+	 * @param dealerButton
+	 */
+	public void setDealer(boolean dealerButton){
+		this.dealer = dealerButton;
+	}
+
+	/**
      *
      * @return
      */
@@ -83,25 +75,26 @@ public class Player {
 		this.hand.add(card);
 	}
 
-    /**
-     *
-     * @param coins
-     */
-    public void winCoints(float coins){
-        this.playerCoins =+ coins;
-    }
+	/**
+	 *
+	 * @param coins
+	 * @return
+	 */
+	public float setCoinsInGame(float coins){
+		if(this.playerCoins >= coins){
+			this.playerCoins =- coins;
+			return coins;
+		}else{
+			return 0;//TODO
+		}
+	}
 
-    /**
-     *
-     * @param coins
-     * @return
-     */
-    public float setCoinsInGame(float coins){
-        if(this.playerCoins >= coins){
-            this.playerCoins =- coins;
-            return coins;
-        }else{
-            return 0;//TODO
-        }
-    }
+	/**
+	 *
+	 * @param coins
+	 */
+	public void winCoints(float coins){
+		this.playerCoins =+ coins;
+	}
+
 }

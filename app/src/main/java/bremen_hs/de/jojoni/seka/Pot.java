@@ -35,22 +35,16 @@ public class Pot {
 	}
 
 	/**
-	 *
-	 * @param potHistory
-	 */
-	public void setPotHistory(HashMap<Player, Float> potHistory) {
-		this.potHistory = potHistory;
-	}
-	/**
 	 * 
 	 * @param player
 	 * @param coins
 	 */
 	public void playerRais(Player player, float coins){
-
-		this.pot =+ coins;
-        this.lastRaise = coins;
-		writeToHistory(player, coins);
+		if(player.setCoinsInGame(coins) != 0) {
+			this.pot =+ coins;
+			this.lastRaise = coins;
+			this.writeToHistory(player, coins);
+		}
 	}
     /**
      *
@@ -66,8 +60,11 @@ public class Pot {
      * @param player
      */
     public void playerCall(Player player){
-        this.pot =+ lastRaise;
-        writeToHistory(player);
+		float coins = player.setCoinsInGame(this.lastRaise);
+		if(coins != 0) {
+			this.pot =+ coins;
+			this.writeToHistory(player, coins);
+		}
     }
 	/**
 	 * 
