@@ -109,7 +109,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     // The functions for the three buttons, implemented by the MainActivity
     public interface GameListener{
         void onFinishedTurn();
-        void onRaiseButtonClicked();
+        void onRaiseButtonClicked(float coins);
         void onCallButtonClicked();
         void onFoldButtonClicked();
 

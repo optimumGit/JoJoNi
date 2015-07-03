@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import bremen_hs.de.jojoni.seka.Player;
+
 /**
  * Created by johan_000 on 02.06.2015.
  */
@@ -109,6 +111,46 @@ public class TurnData {
         ;
        return cardJSON.toString().getBytes();
     }
+
+    public byte[] playerRaiseJson(Player name, float coins){
+        JSONObject cardJSON = new JSONObject();
+        try {
+            cardJSON.put("player name", name);
+            cardJSON.put("coins", coins);
+            cardJSON.put("action", "raise");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ;
+        return cardJSON.toString().getBytes();
+    }
+
+    public byte[] playerCallJson(Player name, float coins){
+        JSONObject cardJSON = new JSONObject();
+        try {
+            cardJSON.put("player name", name);
+            cardJSON.put("coins", coins);
+            cardJSON.put("action", "call");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ;
+        return cardJSON.toString().getBytes();
+    }
+
+
+    public byte[] playerfoldJson(Player name){
+        JSONObject cardJSON = new JSONObject();
+        try {
+            cardJSON.put("player name", name);
+            cardJSON.put("action", "call");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ;
+        return cardJSON.toString().getBytes();
+    }
+
 
     public String getData() {
         return playerName;
