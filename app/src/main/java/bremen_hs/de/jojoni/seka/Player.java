@@ -27,6 +27,7 @@ public class Player {
 	public Player(Participant p){
 		this.playerID   = p.getParticipantId();
 		this.playerName = p.getDisplayName();
+		this.hand = new ArrayList<Cards>();
 	}
 
 	/**
