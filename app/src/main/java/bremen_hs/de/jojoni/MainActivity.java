@@ -200,18 +200,17 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onRaiseButtonClicked() {
         // call the gameManager functions
-        playerRaise();
+
     }
 
     @Override
     public void onCallButtonClicked() {
-        playerCall();
         buildInputWindow();
     }
 
     @Override
     public void onFoldButtonClicked() {
-        playerFold();
+
     }
 
     public void onDoneClicked() {
@@ -653,53 +652,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     public void onP2PDisconnected(String s) {
         Log.d(TAG, "onP2PDisconnected: " + s);
     }
-
-    //******************* spiel logik************************
-    //TODO player object mit uebergeben
-    private void playerFold(){
-
-        //gameManager.playerFold(Player);
-
-        Context context = getApplicationContext();
-        CharSequence text = "playerFold";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-    private void playerRaise(){
-        Player pl = gameManager.getPlayer();
-        Context context = getApplicationContext();
-        CharSequence text = pl.getPlayerName() + " : " + pl.getPlayerID();
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-    private void playerCall(){
-        JSONObject me = new JSONObject();
-        String hallo = "hallo";
-        try {
-            me.put("message", hallo);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        byte[] data = new byte[6];
-        String message = me.toString();
-        message.getBytes(Charset.forName("UTF-8"));
-
-        sendReliableMessageToOthers(message.getBytes(Charset.forName("UTF-8")));
-
-
-        Context context = getApplicationContext();
-        CharSequence text = "playerCall";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
-    }
-
 
     private void buildInputWindow() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
