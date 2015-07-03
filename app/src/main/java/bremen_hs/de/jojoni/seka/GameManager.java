@@ -47,11 +47,8 @@ public class GameManager {
 		return shuffle();
 	}
 
-	/**
-	 *
-	 * @param playerName
-	 * @param playerID
-	 */
+
+
 	public void playerJoinGame(Participant participent){
 		if(!this.gameHistory.containsKey(participent.getParticipantId())){
 			this.gameHistory.put(participent.getDisplayName(), "join");
@@ -74,6 +71,10 @@ public class GameManager {
 		}else{
 			return;
 		}
+	}
+
+	public List<Cards> getPlayerHand(){
+		return player.getHand();
 	}
     /**
      *

@@ -41,7 +41,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/imgVwSlot1"
         android:background="@drawable/deckblatt"
         android:layout_above="@+id/raise_button"
         android:layout_alignParentLeft="true"
@@ -51,15 +51,15 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
+        android:id="@+id/imgVwSlot2"
         android:background="@drawable/deckblatt"
-        android:layout_alignTop="@+id/imageView3"
+        android:layout_alignTop="@+id/imgVwSlot3"
         android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView3"
+        android:id="@+id/imgVwSlot3"
         android:background="@drawable/deckblatt"
         android:layout_above="@+id/call_button"
         android:layout_alignParentRight="true"

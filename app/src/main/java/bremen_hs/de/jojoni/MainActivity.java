@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -65,6 +66,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     final static String CALL = new String("call");
     final static String FOLD = new String("fold");
 
+
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
     private TurnData turnData = new TurnData();
@@ -78,7 +80,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private String mMyPersistentId;
 
+    private int cardCounter = 0;
+
     private GoogleApiClient apiClient;
+
 
     //seka
     GameManager gameManager = new GameManager(mParticipants);
@@ -87,6 +92,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     GameFragment gameFragment;
     MainFragment mainFragment;
     RuleFragment ruleFragment;
+
+
 
 
     @Override
@@ -109,7 +116,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
-        updateUi();
+
+
+                updateUi();
 
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
@@ -540,16 +549,92 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onMessageReceived(byte[] data) {
+        cardCounter ++;
         turnData = turnData.unpersist(data);
         if(turnData.isNewCard()){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
+
+            Player player = mParticipants.get(mMyPersistentId);
+
+            if (cardCounter == 1){
+                ImageView vw = (ImageView) findViewById(R.id.imgVwSlot1);
+                vw.setImageResource(R.drawable.pik_dame);
+            }
+            else if (cardCounter == 2){
+                ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
+                vw.setImageResource(R.drawable.pik_koenig);
+            }
+            else if (cardCounter == 3){
+                ImageView vw = (ImageView) findViewById(R.id.imgVwSlot3);
+                vw.setImageResource(R.drawable.pik_ass);
+            }
+
+
         }
         Log.d(TAG, "Message received count " + turnData.getCardCount());
         Log.d(TAG, "Message received type" + turnData.getCardType());
         gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
     }
+
+    public void checkCards(Player player, int counter){
+        Player pl = player;
+        int c = counter;
+
+        List<Cards> l = pl.getHand();
+        Cards card = l.get(c - 1);
+        int wert = card.getCardCount();
+        int symbol = card.getCardTyp();
+
+        String karte;
+
+        if (symbol == 0) {
+
+            switch (wert){
+                case 0:
+                    karte = "karo_sechs";
+                    break;
+                case 1:
+                    karte = "karo_sieben";
+                    break;
+                case 2:
+                    karte = "karo_acht";
+                    break;
+                case 3:
+                    karte = "karo_neun";
+                    break;
+                case 4:
+                    karte = "karo_zehn";
+                    break;
+                case 5:
+                    karte = "karo_bube";
+                    break;
+                case 6:
+                    karte = "karo_dame";
+                    break;
+                case 7:
+                    karte = "karo_koenig";
+                    break;
+                case 8:
+                    karte = "karo_ass";
+                    break;
+            }
+        }
+        else if (symbol == 1){
+
+        }
+        else if (symbol == 2){
+
+        }
+        else if (symbol == 3){
+
+        }
+
+
+    }
+
+
 
     @Override
     public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
