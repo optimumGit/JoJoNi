@@ -98,24 +98,6 @@ public class TurnData {
 
     }
 
-    public byte[] dealCards(String cardType, String cardCount){
-        JSONObject json = new JSONObject();
-        try {
-            json.put("card typ",   cardType);
-            json.put("card count", cardCount);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String st = json.toString();
-
-        Log.d(TAG, "==== DEAL CARDS\n" + st);
-
-        return st.getBytes(Charset.forName("UTF-8"));
-    }
-
-
     public String getData() {
         return playerName;
     }

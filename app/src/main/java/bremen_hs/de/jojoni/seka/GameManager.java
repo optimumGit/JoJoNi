@@ -104,35 +104,6 @@ public class GameManager {
 	public void playerWin(float coins){
 		this.player.winCoints(coins);
 	}
-	/**
-	 * 
-	 * 
-	 * @param list<playerList> playerList
-	 */
-	public byte[] dealCards(List<Player> playerList) {//TODO fehler abfangen... java.lang.IndexOutOfBoundsException.... nur 36 karten stack
-		List<Cards> currentStack = this.shuffle();
-
-
-
-
-
-/*		int y = 0;
-
-		for (int e = 0; e < playerList.size(); e++) {
-			playerList.get(e).getHand().clear();
-		}
-
-
-		for (int i = 0; i < 3; i++) {
-			while (y < playerList.size()) {
-				playerList.get(y).getNewCards(currentStack.get(0));
-				currentStack.remove(0);
-				y++;
-			}
-			y = 0;
-		}*/
-		return null;
-	}
 
 	public float getPotSize(){
 		return this.pot.getPotSize();
