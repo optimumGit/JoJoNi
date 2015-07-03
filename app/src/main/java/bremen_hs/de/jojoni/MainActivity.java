@@ -85,6 +85,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // Fragments
     GameFragment gameFragment;
     MainFragment mainFragment;
+    RuleFragment ruleFragment;
 
 
     @Override
@@ -102,6 +103,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         gameFragment = new GameFragment();
         mainFragment = new MainFragment();
+        ruleFragment = new RuleFragment();
 
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
@@ -242,7 +244,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onShowRulesClicked() {
-        getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment, ruleFragment).commit();
+
     }
 
     // Instantiate a new TurnBasedMatch - Getting to the Lobby
@@ -736,6 +739,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
         else if (gameFragment.isVisible()){
             showExitGamePopUp();
+        }
+        else if (ruleFragment.isVisible()){
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
         }
 
     }

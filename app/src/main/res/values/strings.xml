@@ -9,6 +9,41 @@
     <string name="btnShowRules">Regeln anzeigen</string>
     <string name="signin_other_error">There was an issue with sign in.  Please try again later.</string>
     <string name="title_activity_game">GameActivity</string>
+    <string name="seka_rules_header"><b>Seka Regelwerk</b></string>
+    <string name="seka_rules_1">Am Tisch sitzen bis zu 4 Spieler. Es gibt einen Pot wo das Geld reinkommt.Bevor die Karten verteilt werden muss jeder Spieler einen Starteinsatz setzen. Jeder Spieler erhält drei Karten.</string>
+    <string name="seka_rules_2">Nachdem alle Spieler die Karten bekommen haben, darf der erste Spieler „Raisen“ (Erhöhen) oder „Passen“ (Aussteigen). Erhöht wird mit mindestens der Höhe des Startbetrages, nach oben hin ist „no limit“ (unbegrenzt).</string>
+    <string name="seka_rules_3">Wenn ein Spieler eine Summe setzt , muss mindestens die gleiche Summe vom nächsten Spieler gesetzt werden (Call), die Summe kann von nächsten Spieler auch erhöht werden(Raise).</string>
+    <string name="seka_rules_4"><b>KARTENKOMBINATIONEN:</b></string>
+    <string name="seka_rules_5">Kartensymbole: ♠ ♥ ♦ ♣</string>
+    <string name="seka_rules_6">Kartenwertung: 6 = 6; 7=7; 8=8; 9=9; 10=10; Bube=10; Dame=10; König=10; Ass=11></string>
+    <string name="seka_rules_7">7 Pik ist der Joker des Spiels. Der Spiele kann sich eine beliebige Karte auswählen, sogar eine Karte die er schon auf der Hand hat.</string>
+    <string name="seka_rules_8">Beispiele:</string>
+    <string name="seka_rules_9.2">= 10 Punkte. Hier wird die höchste Karte gezählt, Kreuz 10 oder der Pik König.</string>
+    <string name="seka_rules_10.2">= 16 Punkte. Zwei Piks können addiert werden.</string>
+    <string name="seka_rules_11.2">= 26 Punkte. Drei Kreuze können addiert werden. 26 ist schon eine starke Hand.</string>
+    <string name="seka_rules_12.2">= 11 Punkte. Ein Ass zählt als 11 Punkte.</string>
+    <string name="seka_rules_13.2">= 22 Punkte. Zwei Asse können addiert werden, aber auch nur Ass. Zwei Könige z.B. darf man nicht zusammen addieren.</string>
+    <string name="seka_rules_14.2">= 33,5 Punkte. Somit die stärkste Hand im Spiel.</string>
+    <string name="seka_rules_15.2">= 33 Punkte. Die zweitstärkste Hand im Spiel.</string>
+    <string name="seka_rules_16.2">= 30,5 Punkte. Alle anderen Kartenkombinationen mit drei gleichen Karten sind gleichwertig und zwar 30,5 Punkte.</string>
+    <string name="seka_rules_17.2">= der Spieler wählt noch ein Ass Kreuz (für die Pik 7) aus.</string>
+    <string name="seka_rules_18.2">= 27 Punkte</string>
+    <string name="seka_rules_9.1">Hand [♣ 10; ♥ 6; ♠ König]</string>
+    <string name="seka_rules_10.1">Hand [♣ 10; ♠ 6; ♠ König]</string>
+    <string name="seka_rules_11.1">Hand[♣ 10; ♣  6; ♣  König]</string>
+    <string name="seka_rules_12.1">Hand [♣ Ass; ♦ 6; ♠ König]</string>
+    <string name="seka_rules_13.1">Hand [♣ Ass; ♦ Ass; ♠ König]</string>
+    <string name="seka_rules_14.1">Hand [♣ 6; ♦ 6; ♥6]</string>
+    <string name="seka_rules_15.1">Hand [♣ Ass; ♦ Ass; ♠ Ass]</string>
+    <string name="seka_rules_16.1">Hand [♣ Bube; ♦ Bube; ♠ Bube]</string>
+    <string name="seka_rules_17.1">Hand [♣ Ass; ♠ 7; ♣ 5]</string>
+    <string name="seka_rules_18.1">Hand [♣ Ass; ♣ Ass; ♣ 5]</string>
+    <string name="seka_rules_19">Der Spieler mit der höchsten Punkteanzahl gewinnt.</string>
+    <string name="seka_rules_20">Bei einem Punktegleichstand gibt es Seka(Stechen), Folgendes passiert:</string>
+    <string name="seka_rules_21">Der Pot wird eingefroren, die Spieler die raus sind, können sich in das Stechen einkaufen. Die Preise variieren,  haben 2 Spieler Seka wird sich mit ½ Pot eingekauft, sind es 3 Spieler die Seka haben wird sich mit 1/3 eingekauft.</string>
+    <string name="seka_rules_22">Nach dem Einkaufen werden die Karten neu verteilt und das Spiel läuft normal weiter.</string>
+
+
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
