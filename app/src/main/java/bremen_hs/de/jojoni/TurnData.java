@@ -97,6 +97,18 @@ public class TurnData {
         return turnData;
 
     }
+    public byte[] makeJsonCard(int cardType, int cardCount, int rounds){
+        JSONObject cardJSON = new JSONObject();
+        try {
+            cardJSON.put("new card",   rounds);
+            cardJSON.put("card type",  cardType);
+            cardJSON.put("card count", cardCount);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        ;
+       return cardJSON.toString().getBytes();
+    }
 
     public String getData() {
         return playerName;

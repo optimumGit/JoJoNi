@@ -761,17 +761,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             for (Player participant : mParticipants.values()) {
                 if (!participant.equals(mMyPersistentId)) {
-                    JSONObject cardJSON = new JSONObject();
-                    try {
-                        cardJSON.put("new card",   rounds);
-                        cardJSON.put("card type",  stack.get(cards).getCardTyp());
-                        cardJSON.put("card count", stack.get(cards).getCardCount());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    byte[] data = turnData.makeJsonCard(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                            cardJSON.toString().getBytes(), mRoom.getRoomId(), participant.getPlayerID());
+                           data , mRoom.getRoomId(), participant.getPlayerID());
                 }else{
                     gameManager.setCardToPlayer(stack.get(cards));
                 }
