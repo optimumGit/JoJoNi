@@ -99,7 +99,7 @@ public class TurnData {
         return turnData;
 
     }
-    public byte[] makeJsonCard(int cardType, int cardCount, int rounds){
+    public byte[] CardJson(int cardType, int cardCount, int rounds){
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("new card",   rounds);
@@ -112,42 +112,19 @@ public class TurnData {
        return cardJSON.toString().getBytes();
     }
 
-    public byte[] playerRaiseJson(Player name, float coins){
+    public byte[] playerActionJson(Player name, float coins, String action){
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("player name", name);
-            cardJSON.put("coins", coins);
-            cardJSON.put("action", "raise");
+            if(!action.equals("fold")) {
+                cardJSON.put("coins", coins);
+            }else{
+                cardJSON.put("coins", null);
+            }
+            cardJSON.put("action", action);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ;
-        return cardJSON.toString().getBytes();
-    }
-
-    public byte[] playerCallJson(Player name, float coins){
-        JSONObject cardJSON = new JSONObject();
-        try {
-            cardJSON.put("player name", name);
-            cardJSON.put("coins", coins);
-            cardJSON.put("action", "call");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        ;
-        return cardJSON.toString().getBytes();
-    }
-
-
-    public byte[] playerfoldJson(Player name){
-        JSONObject cardJSON = new JSONObject();
-        try {
-            cardJSON.put("player name", name);
-            cardJSON.put("action", "call");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        ;
         return cardJSON.toString().getBytes();
     }
 

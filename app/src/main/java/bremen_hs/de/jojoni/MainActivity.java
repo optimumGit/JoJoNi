@@ -61,6 +61,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final int SIGN_IN_REQUEST = 9001;
     final static int WAITING_ROOM_REQUEST = 10001;
     final static int RC_INVITATION_INBOX = 20000;
+    final static String RAIS = new String("rais");
+    final static String CALL = new String("call");
+    final static String FOLD = new String("fold");
 
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
@@ -207,7 +210,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.playerCallJson(mParticipants.get(mMyPersistentId), coins));
+        sendReliableMessageToOthers(turnData.playerActionJson(mParticipants.get(mMyPersistentId), coins, RAIS));
     }
 
     private void sendReliableMessageToOthers(byte[] data) {
@@ -760,7 +763,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             for (Player participant : mParticipants.values()) {
                 if (!participant.equals(mMyPersistentId)) {
-                    byte[] data = turnData.makeJsonCard(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
+                    byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                            data , mRoom.getRoomId(), participant.getPlayerID());
