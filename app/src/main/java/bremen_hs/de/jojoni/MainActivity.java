@@ -536,6 +536,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private void onMessageReceived(byte[] data) {
         turnData = turnData.unpersist(data);
+        if(turnData.isNewCard()){
+            Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
+            gameManager.setCardToPlayer(card);
+        }
         Log.d(TAG, "Message received " + turnData.getData());
         gameFragment.listView.setText(turnData.getData());
         updateUi();
@@ -757,7 +761,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 if (!participant.equals(mMyPersistentId)) {
                     JSONObject cardJSON = new JSONObject();
                     try {
-                        cardJSON.put("card type", stack.get(cards).getCardTyp());
+                        cardJSON.put("new card",   rounds);
+                        cardJSON.put("card type",  stack.get(cards).getCardTyp());
                         cardJSON.put("card count", stack.get(cards).getCardCount());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -771,7 +776,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 }
                 cards++;
             }
-            rounds++;
+            count++;
         }
         return null;
     }

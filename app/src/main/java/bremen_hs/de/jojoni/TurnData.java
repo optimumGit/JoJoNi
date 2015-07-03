@@ -17,11 +17,28 @@ public class TurnData {
     private final String TAG     = "TurnData";
     private String playerName    = null;
     private String playerAction  = null;
-    private float playerSetCoins = 0;
-    private int turn = 0;
+    private boolean isNewCard    = false;
+    private float playerSetCoins = new Integer(null);
+    private int cardType  = new Integer(null);
+    private int cardCount = new Integer(null);
+    private int turn      = new Integer(null);
+
+
 
     public TurnData(){
 
+    }
+
+    public int getCardType(){
+        return this.cardType;
+    }
+
+    public boolean isNewCard(){
+        return this.isNewCard;
+    }
+
+    public int getCardCount(){
+        return this.cardCount;
     }
 
 
@@ -66,6 +83,10 @@ public class TurnData {
 
             if (obj.has("player name")) {
                 turnData.playerName = obj.getString("player name");
+            }else if(obj.has("new card")){
+                turnData.isNewCard = true;
+                turnData.cardCount = Integer.parseInt(obj.getString("card count"));
+                turnData.cardType  = Integer.parseInt(obj.getString("card type"));
             }
 
         } catch (JSONException e) {
