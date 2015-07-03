@@ -139,11 +139,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         String playerName = Games.Players.getCurrentPlayer(apiClient).getDisplayName();
 
         gameManager.playerJoinGame(playerName, playerID);
+        Games.Invitations.registerInvitationListener(apiClient, this);
 
-
-        if (apiClient.isConnected()) {
-            Games.Invitations.registerInvitationListener(apiClient, this);
-        }
 
         if (bundle != null) {
             Invitation inv =
