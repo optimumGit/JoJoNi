@@ -470,8 +470,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 .setMessageReceivedListener(this)
                 .setRoomStatusUpdateListener(this)
                 .setInvitationIdToAccept(invitation.getInvitationId());
+        RoomConfig room = roomConfigBuilder.build();
 
-        Games.RealTimeMultiplayer.join(apiClient, roomConfigBuilder.build());
+        Games.RealTimeMultiplayer.join(apiClient, room);
     }
 
     @Override
