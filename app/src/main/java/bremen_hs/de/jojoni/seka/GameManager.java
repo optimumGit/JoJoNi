@@ -16,14 +16,19 @@ import java.util.List;
  */
 public class GameManager {
 	private HashMap<String, Object> gameHistory = null;
+	private HashMap<String, Player> mParticipants = null;
 	private CardStack cardStack = null;
 	private Player player = null;
 	private Pot pot = null;
 
-	public GameManager() {
+	/**
+	 *
+	 */
+	public GameManager(HashMap<String, Player> mParticipants) {
 		this.pot = new Pot();
 		this.cardStack   = new CardStack();
 		this.gameHistory = new HashMap<String, Object>();
+		this.mParticipants = mParticipants;
 	}
 
 	public HashMap<String, Object> getGameHistoryList(){
@@ -92,22 +97,29 @@ public class GameManager {
 	 * 
 	 * @param list<playerList> playerList
 	 */
-	public void dealCards(List<Player> playerList){//TODO fehler abfangen... java.lang.IndexOutOfBoundsException.... nur 36 karten stack 
+	public byte[] dealCards(List<Player> playerList) {//TODO fehler abfangen... java.lang.IndexOutOfBoundsException.... nur 36 karten stack
 		List<Cards> currentStack = this.shuffle();
-		int y = 0;
-		
-		for(int e = 0; e < playerList.size(); e++){
+
+
+
+
+
+/*		int y = 0;
+
+		for (int e = 0; e < playerList.size(); e++) {
 			playerList.get(e).getHand().clear();
 		}
-		
-		for(int i = 0; i < 3; i++){
-			while(y < playerList.size()){
+
+
+		for (int i = 0; i < 3; i++) {
+			while (y < playerList.size()) {
 				playerList.get(y).getNewCards(currentStack.get(0));
 				currentStack.remove(0);
 				y++;
 			}
 			y = 0;
-		}
+		}*/
+		return null;
 	}
 
 	public float getPotSize(){

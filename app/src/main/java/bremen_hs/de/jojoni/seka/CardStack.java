@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CardStack {
-	
+
 	private List<Cards> stack = null;
 
 	/**
@@ -23,7 +23,7 @@ public class CardStack {
 	}
 	/**
 	 * Get a List with Cards
-	 * 
+	 *
 	 * @return ArrayList<Cards>
 	 */
 	public List<Cards> getStack(){
@@ -32,7 +32,6 @@ public class CardStack {
  	
 	/**
 	 * Creat new stack
-	 *  
 	 */
 	private void newStack() {
 		for (int x = 0; x <= 3; x++) {

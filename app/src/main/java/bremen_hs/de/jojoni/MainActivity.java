@@ -39,6 +39,10 @@ import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -80,7 +84,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private GoogleApiClient apiClient;
 
     //seka
-    GameManager gameManager = new GameManager();
+    GameManager gameManager = new GameManager(mParticipants);
 
     // Fragments
     GameFragment gameFragment;
@@ -256,7 +260,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // Instantiate a new TurnBasedMatch - Getting to the Lobby
     private void onStartMatchClicked() {
         int minPlayers = 1;
-        int maxPlayers = 8;
+        int maxPlayers = 4;
         Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(apiClient,
                 minPlayers, maxPlayers, true);
         startActivityForResult(intent, INVITE_PLAYERS_REQUEST);
@@ -637,6 +641,20 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         toast.show();
     }
     private void playerCall(){
+        JSONObject me = new JSONObject();
+        String hallo = "hallo";
+        try {
+            me.put("message", hallo);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        byte[] data = new byte[6];
+        String message = me.toString();
+        message.getBytes(Charset.forName("UTF-8"));
+
+        sendReliableMessageToOthers(message.getBytes(Charset.forName("UTF-8")));
+
 
         Context context = getApplicationContext();
         CharSequence text = "playerCall";
