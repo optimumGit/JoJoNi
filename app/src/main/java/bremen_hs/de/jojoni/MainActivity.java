@@ -331,8 +331,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void leaveRoom() {
         if (mRoom != null) {
             Games.RealTimeMultiplayer.leave(apiClient, this, mRoom.getRoomId());
-            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
             mRoom = null;
+            updateUi();
         }
     }
 
@@ -374,7 +374,18 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
 
     private void updateUi() {
-        gameFragment.setEnabled(isMyTurn());
+        if(mRoom == null){
+            return;
+        }
+        if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && !gameFragment.isVisible()){
+            getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commitAllowingStateLoss();
+        } else if(mRoom.getStatus() == Room.ROOM_STATUS_INVITING){
+            showWaitingRoom(mRoom);
+        } else if(mRoom == null && !mainFragment.isVisible()){
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+        } else {
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+        }
     }
 
 
@@ -401,7 +412,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
 
         updateTurnIndices();
-        //updateViewVisibility();
+        //updateUi();
     }
 
     private void updateTurnIndices() {
@@ -468,9 +479,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
                 .setMessageReceivedListener(this)
                 .setRoomStatusUpdateListener(this)
-                .setInvitationIdToAccept(invitation.getInvitationId())
-                .setMessageReceivedListener(this);
-
+                .setInvitationIdToAccept(invitation.getInvitationId());
 
         Games.RealTimeMultiplayer.join(apiClient, roomConfigBuilder.build());
 
@@ -484,8 +493,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if (mAlertDialog.isShowing()) {
             mAlertDialog.dismiss();
         }
-
-
         Toast.makeText(this, "The invitation was removed.", Toast.LENGTH_SHORT).show();
     }
 
@@ -512,14 +519,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
-        getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commit();
-        //updateUi();
+        Log.d(TAG, "onJoinedRoom: " + statusCode + ":" + room);
     }
 
     @Override
     public void onLeftRoom(int statusCode, String s) {
         mRoom = null;
-        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+        updateUi();
     }
 
     @Override
@@ -530,6 +536,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             return;
         }
         mRoom = room;
+        updateUi();
     }
 
     @Override
@@ -537,7 +544,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "Message received " + realTimeMessage.toString());
         byte[] data = realTimeMessage.getMessageData();
         onMessageReceived(data);
-
     }
 
     private void onMessageReceived(byte[] data) {
@@ -548,38 +554,43 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     @Override
-    public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId){
+    public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
         Log.d(TAG, "onRealTimeMessageSent: " + statusCode + ":" + participantId);
     }
 
     @Override
     public void onRoomConnecting(Room room) {
-
+        Log.d(TAG, "onRoomConnecting: " + room);
     }
 
     @Override
     public void onRoomAutoMatching(Room room) {
-
+        Log.d(TAG, "onRoomAutoMatching: " + room);
     }
 
     @Override
     public void onPeerInvitedToRoom(Room room, List<String> list) {
-
+        Log.d(TAG, "onPeerInvitedToRoom: "  + room + ":" + list);
     }
 
     @Override
     public void onPeerDeclined(Room room, List<String> list) {
-
+        Log.d(TAG, "onPeerDeclined: " + room + ":" + list);
     }
 
     @Override
     public void onPeerJoined(Room room, List<String> list) {
-
+        Log.d(TAG, "onPeerJoined: " + room + ":" + list);
+        mRoom = room;
+        for (String pId : list) {
+            onParticipantConnected(mRoom.getParticipant(pId));
+        }
     }
+
 
     @Override
     public void onPeerLeft(Room room, List<String> list) {
-
+        Log.d(TAG, "onPeerLeft: " + room + ":" + list);
     }
 
     @Override
@@ -595,27 +606,52 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onDisconnectedFromRoom(Room room) {
+        Log.d(TAG, "onDisconnectedFromRoom: " + room);
         leaveRoom();
     }
 
     @Override
     public void onPeersConnected(Room room, List<String> list) {
-
+        Log.d(TAG, "onPeersConnected:" + room + ":" + list);
+        mRoom = room;
+        for (String pId : list) {
+            onParticipantConnected(mRoom.getParticipant(pId));
+        }
     }
 
     @Override
     public void onPeersDisconnected(Room room, List<String> list) {
+        Log.d(TAG, "onPeersDisconnected: " + room + ":" + list);
+        for (String pId : list) {
+            onParticipantDisconnected(pId, pId);
+        }
+    }
 
+    private void onParticipantDisconnected(String messagingId, String persistentId) {
+            Log.d(TAG, "onParticipantDisconnected:" + messagingId);
+            Player dp = mParticipants.remove(persistentId);
+            if (dp != null) {
+                // Display disconnection toast
+                Toast.makeText(this, dp.getPlayerName() + " disconnected.", Toast.LENGTH_SHORT).show();
+
+
+                if (mRoom != null && mParticipants.size() <= 1) {
+                    // Last player left in an RTMP game, leave
+                    leaveRoom();
+                } else {
+                    updateTurnIndices();
+                }
+            }
     }
 
     @Override
     public void onP2PConnected(String s) {
-
+        Log.d(TAG, "onP2PConnected: " + s);
     }
 
     @Override
     public void onP2PDisconnected(String s) {
-
+        Log.d(TAG, "onP2PDisconnected: " + s);
     }
 
     //******************* spiel logik************************
