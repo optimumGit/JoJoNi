@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,9 +36,6 @@ import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListene
 import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -187,13 +185,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        // call the gameManager functions
+        raiseInputWindow();
 
     }
 
     @Override
     public void onCallButtonClicked() {
-        buildInputWindow();
+
     }
 
     @Override
@@ -646,21 +644,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "onP2PDisconnected: " + s);
     }
 
-    private void buildInputWindow() {
+    private void raiseInputWindow() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Title");
-        alert.setMessage("Message");
+        alert.setTitle("Erhöhen");
+        alert.setMessage("Gib einen Wert ein!");
 
         // Set an EditText view to get user input
         final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
         alert.setView(input);
 
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Editable value = input.getText();
-                turnData.setData(turnData.getData() + value);
-                onDoneClicked();
+                Float raise = Float.parseFloat(value.toString());
             }
         });
 
