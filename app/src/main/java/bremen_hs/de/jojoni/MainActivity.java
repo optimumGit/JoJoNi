@@ -770,7 +770,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                             cardJSON.toString().getBytes(), mRoom.getRoomId(), participant.getPlayerID());
                 }else{
-
+                    gameManager.setCardToPlayer(stack.get(cards));
                 }
                 cards++;
             }

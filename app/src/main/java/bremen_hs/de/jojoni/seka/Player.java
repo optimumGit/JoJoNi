@@ -70,6 +70,9 @@ public class Player {
 		this.dealer = dealerButton;
 	}
 
+	public void setCard(Cards card){
+		this.hand.add(card);
+	}
 	/**
      *
      * @return

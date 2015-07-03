@@ -31,6 +31,14 @@ public class GameManager {
 		this.mParticipants = mParticipants;
 	}
 
+	public void setCardToPlayer(Cards card){
+		this.player.setCard(card);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
 	public HashMap<String, Object> getGameHistoryList(){
 		return this.gameHistory;
 	}
