@@ -54,7 +54,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         OnInvitationReceivedListener,
         RoomUpdateListener,
         RealTimeMessageReceivedListener,
-        RoomStatusUpdateListener {
+        RoomStatusUpdateListener,
+        RealTimeMultiplayer.ReliableMessageSentCallback {
 
     private static final String TAG = "SekaCardGame";
     private static final int INVITE_PLAYERS_REQUEST = 10000;
@@ -219,10 +220,14 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private void sendReliableMessageToOthers(byte[] data) {
         Log.d(TAG, "sendRliableMessage");
+        Player me = mParticipants.get(mMyPersistentId);
         for (Player participant : mParticipants.values()) {
-            Log.d(TAG, "reliablemessage to:" + participant.getPlayerName());
-            Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                    data, mRoom.getRoomId(), participant.getPlayerID());
+            if (!participant.equals(me)) {
+                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                Log.d(TAG, "reliablemessage to:" + mRoom.getRoomId());
+                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                        data, mRoom.getRoomId(), participant.getPlayerID());
+            }
         }
     }
 
@@ -335,7 +340,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
-            Toast.makeText(this, "Player: " + p.getPlayerName(),Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(), "Player: " + p.getPlayerName(),Toast.LENGTH_LONG);
         }
         // TODO: Karten austeilen
         sendReliableMessageToOthers(turnData.persist());
@@ -525,10 +530,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onRealTimeMessageReceived(RealTimeMessage realTimeMessage) {
-        Toast.makeText(this, "Called", Toast.LENGTH_LONG);
+        Log.d(TAG, "Message received " + realTimeMessage.toString());
         byte[] data = realTimeMessage.getMessageData();
-        Toast.makeText(this, data.toString(), Toast.LENGTH_LONG);
-
         onMessageReceived(data);
 
     }
@@ -538,6 +541,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         gameFragment.listView.setText(turnData.getData());
         updateUi();
+    }
+
+    @Override
+    public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId){
+        Log.d(TAG, "onRealTimeMessageSent: " + statusCode + ":" + participantId);
     }
 
     @Override
