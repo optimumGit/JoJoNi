@@ -212,6 +212,4 @@ public class Results {
 			return 0.0f;
 		}
 	}
-
-
 }

@@ -70,6 +70,10 @@ public class Player {
 		this.dealer = dealerButton;
 	}
 
+	/**
+	 * add card to player hand
+	 * @param card
+	 */
 	public void setCard(Cards card){
 		this.hand.add(card);
 	}
@@ -79,14 +83,6 @@ public class Player {
      */
 	public boolean isDealer(){
 		return this.dealer;
-	}
-	/**
-	 * add card to player hand
-	 * 
-	 * @param card
-	 */
-	public void getNewCards(Cards card){
-		this.hand.add(card);
 	}
 
 	/**
@@ -99,7 +95,7 @@ public class Player {
 			this.playerCoins =- coins;
 			return coins;
 		}else{
-			return 0;//TODO
+			return 0;
 		}
 	}
 

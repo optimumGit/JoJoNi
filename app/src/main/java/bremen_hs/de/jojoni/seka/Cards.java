@@ -23,22 +23,6 @@ public class Cards {
 
 	/**
 	 *
-	 * @param type
-	 */
-	public void setCardTyp(int type){
-		this.cardType = type;
-	}
-
-	/**
-	 *
-	 * @param count
-	 */
-	public void setCardCount(int count){
-		this.cardCount = count;
-	}
-
-	/**
-	 *
 	 * @return
 	 */
 	public int getCardTyp(){
