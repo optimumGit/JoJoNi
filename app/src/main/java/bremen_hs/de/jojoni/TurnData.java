@@ -43,7 +43,10 @@ public class TurnData {
         return this.cardCount;
     }
 
-
+    /**
+     *
+     * @return
+     */
     public byte[] persist(){
         JSONObject json = new JSONObject();
         try {
@@ -62,6 +65,11 @@ public class TurnData {
         return st.getBytes(Charset.forName("UTF-8"));
     }
 
+    /**
+     *
+     * @param data
+     * @return
+     */
     public TurnData unpersist(byte[] data){
         if (data == null) {
             Log.d(TAG, "Empty array---possible bug.");
@@ -82,7 +90,6 @@ public class TurnData {
 
         try {
             JSONObject obj = new JSONObject(st);
-
             if (obj.has("player name")) {
                 turnData.playerName = obj.getString("player name");
             }else if(obj.has("new card")){
@@ -90,15 +97,20 @@ public class TurnData {
                 turnData.cardCount = Integer.parseInt(obj.getString("card count"));
                 turnData.cardType  = Integer.parseInt(obj.getString("card type"));
             }
-
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return turnData;
-
     }
+
+    /**
+     *
+     * @param cardType
+     * @param cardCount
+     * @param rounds
+     * @return
+     */
     public byte[] CardJson(int cardType, int cardCount, int rounds){
         JSONObject cardJSON = new JSONObject();
         try {
@@ -108,11 +120,17 @@ public class TurnData {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        ;
        return cardJSON.toString().getBytes();
     }
 
-    public byte[] playerActionJson(Player name, float coins, String action){
+    /**
+     *
+     * @param name
+     * @param coins
+     * @param action
+     * @return
+     */
+    public byte[] gameBroadcast(Player name, float coins, String action){
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("player name", name);

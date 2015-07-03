@@ -219,7 +219,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.playerActionJson(mParticipants.get(mMyPersistentId), coins, RAIS));
+        sendReliableMessageToOthers(turnData.gameBroadcast(mParticipants.get(mMyPersistentId), coins, RAIS));
     }
 
     private void sendReliableMessageToOthers(byte[] data) {
