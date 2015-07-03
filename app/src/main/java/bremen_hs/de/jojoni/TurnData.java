@@ -18,10 +18,10 @@ public class TurnData {
     private String playerName    = null;
     private String playerAction  = null;
     private boolean isNewCard    = false;
-    private float playerSetCoins = new Integer(null);
-    private int cardType  = new Integer(null);
-    private int cardCount = new Integer(null);
-    private int turn      = new Integer(null);
+    private float playerSetCoins = 0.0f;
+    private int cardType;//new Integer(null);
+    private int cardCount;//new Integer(null);
+    private int turn;//new Integer(null);
 
 
 
