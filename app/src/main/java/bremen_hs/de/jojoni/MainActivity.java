@@ -62,7 +62,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
-    private RealTimeMultiplayer currentMatch;
     private TurnData turnData = new TurnData();
     private HashMap<String, Player> mParticipants = new HashMap<>();
     private Room mRoom;
@@ -103,7 +102,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
-        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+        updateUi();
 
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
@@ -138,13 +137,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         if (apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
-        }
-
-        if (currentMatch != null) {
-            if (apiClient == null || !apiClient.isConnected()) {
-                Log.d(TAG, "Warning: accessing TurnBasedMatch when not connected");
-            }
-            return;
         }
 
         if (bundle != null) {
@@ -361,15 +353,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private void updateUi() {
         if(mRoom == null){
+            Log.d(TAG, "room null");
+            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
             return;
         }
         if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && !gameFragment.isVisible()) {
+            Log.d(TAG, "Room Active And mainfragmentvisible");
             getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commitAllowingStateLoss();
         }else if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && gameFragment.isVisible()){
+            Log.d(TAG, "Room Active And gamefragment visible");
             return;
         } else if(mRoom.getStatus() == Room.ROOM_STATUS_INVITING){
+            Log.d(TAG, "Room inviting");
             showWaitingRoom(mRoom);
         } else if(mRoom == null && !mainFragment.isVisible()){
+            Log.d(TAG, "room null");
             getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
         } else {
             //getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
@@ -470,8 +468,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 .setInvitationIdToAccept(invitation.getInvitationId());
 
         Games.RealTimeMultiplayer.join(apiClient, roomConfigBuilder.build());
-
-        //updateUi();
     }
 
     @Override
