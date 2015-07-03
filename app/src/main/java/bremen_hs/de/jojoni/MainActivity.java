@@ -1,9 +1,6 @@
 package bremen_hs.de.jojoni;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,10 +36,6 @@ import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -110,7 +103,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
-        getFragmentManager().beginTransaction().add(R.id.fragment, mainFragment).commit();
+        getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
 
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
@@ -347,13 +340,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
         // TODO: Karten austeilen
         sendReliableMessageToOthers(turnData.persist());
-        FragmentManager fragmentManager = getFragmentManager();
-
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.fragment, gameFragment);
-
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
+        updateUi();
     }
 
 
@@ -376,14 +363,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if(mRoom == null){
             return;
         }
-        if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && !gameFragment.isVisible()){
+        if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && !gameFragment.isVisible()) {
             getFragmentManager().beginTransaction().replace(R.id.fragment, gameFragment).commitAllowingStateLoss();
+        }else if(mRoom.getStatus() == Room.ROOM_STATUS_ACTIVE && gameFragment.isVisible()){
+            return;
         } else if(mRoom.getStatus() == Room.ROOM_STATUS_INVITING){
             showWaitingRoom(mRoom);
         } else if(mRoom == null && !mainFragment.isVisible()){
             getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
         } else {
-            getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
+            //getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
         }
     }
 
@@ -547,7 +536,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private void onMessageReceived(byte[] data) {
         turnData = turnData.unpersist(data);
-
+        Log.d(TAG, "Message received " + turnData.getData());
         gameFragment.listView.setText(turnData.getData());
         updateUi();
     }
@@ -632,8 +621,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             if (dp != null) {
                 // Display disconnection toast
                 Toast.makeText(this, dp.getPlayerName() + " disconnected.", Toast.LENGTH_SHORT).show();
-
-
                 if (mRoom != null && mParticipants.size() <= 1) {
                     // Last player left in an RTMP game, leave
                     leaveRoom();

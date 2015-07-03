@@ -64,8 +64,8 @@ public class TurnData {
         try {
             JSONObject obj = new JSONObject(st);
 
-            if (obj.has("data")) {
-                turnData.playerName = obj.getString("data");
+            if (obj.has("player name")) {
+                turnData.playerName = obj.getString("player name");
             }
 
         } catch (JSONException e) {
