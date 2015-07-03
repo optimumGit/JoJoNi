@@ -35,6 +35,10 @@ public class GameManager {
 		return this.gameHistory;
 	}
 
+	public List<Cards> getStack(){
+		return shuffle();
+	}
+
 	/**
 	 *
 	 * @param playerName

@@ -77,15 +77,11 @@ public class TurnData {
 
     }
 
-    public byte[] dealCards(ArrayList<Integer> cards){
+    public byte[] dealCards(String cardType, String cardCount){
         JSONObject json = new JSONObject();
         try {
-            json.put("first card typ",    cards.get(0));
-            json.put("first card count",  cards.get(1));
-            json.put("second card typ",   cards.get(2));
-            json.put("second card count", cards.get(3));
-            json.put("third card typ",    cards.get(4));
-            json.put("third card count",  cards.get(5));
+            json.put("card typ",   cardType);
+            json.put("card count", cardCount);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -93,7 +89,7 @@ public class TurnData {
 
         String st = json.toString();
 
-        Log.d(TAG, "==== PERSISTING\n" + st);
+        Log.d(TAG, "==== DEAL CARDS\n" + st);
 
         return st.getBytes(Charset.forName("UTF-8"));
     }

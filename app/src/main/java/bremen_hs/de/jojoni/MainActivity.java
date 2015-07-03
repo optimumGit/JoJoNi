@@ -36,11 +36,15 @@ import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import bremen_hs.de.jojoni.seka.Cards;
 import bremen_hs.de.jojoni.seka.GameManager;
 import bremen_hs.de.jojoni.seka.Player;
 
@@ -195,7 +199,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onFoldButtonClicked() {
-
+        dealCards();
     }
 
     public void onDoneClicked() {
@@ -734,6 +738,39 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             showExitGamePopUp();
         }
 
+    }
+    //+++++++++++++++++++++ game ++++++++++++++++++++++
+
+    public byte[] dealCards(){
+        List<Cards> stack = gameManager.getStack();
+
+        int count  = 0;//while zaehler
+        int cards  = 0;//aktuelle karte
+        int rounds = 3;//Anzahl der runden
+
+        while(count < rounds) {
+
+            for (Player participant : mParticipants.values()) {
+                if (!participant.equals(mMyPersistentId)) {
+                    JSONObject cardJSON = new JSONObject();
+                    try {
+                        cardJSON.put("card type", stack.get(cards).getCardTyp());
+                        cardJSON.put("card count", stack.get(cards).getCardCount());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                    Log.d(TAG, "reliablemessage to:" + mRoom.getRoomId());
+                    Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                            cardJSON.toString().getBytes(), mRoom.getRoomId(), participant.getPlayerID());
+                }else{
+
+                }
+                cards++;
+            }
+            rounds++;
+        }
+        return null;
     }
 
 }
