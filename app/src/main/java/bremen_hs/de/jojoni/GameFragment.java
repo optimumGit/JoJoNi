@@ -30,9 +30,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
 
     public GameFragment() {
-
         mainFragment = new MainFragment();
-
     }
 
     @Override
@@ -109,7 +107,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     // The functions for the three buttons, implemented by the MainActivity
     public interface GameListener{
         void onFinishedTurn();
-        void onRaiseButtonClicked(float coins);
+        void onRaiseButtonClicked();
         void onCallButtonClicked();
         void onFoldButtonClicked();
 
