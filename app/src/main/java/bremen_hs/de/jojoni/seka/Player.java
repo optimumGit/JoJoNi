@@ -4,7 +4,6 @@ import com.google.android.gms.games.multiplayer.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * 20150216
@@ -17,7 +16,7 @@ public class Player {
 	private String playerName = null;
     private String playerID   = null;
 	private float playerCoins = 1000; //TODO start coins??
-	private List<Cards> hand  = null;
+	private List<Cards> hand  = new ArrayList<Cards>();
 	private boolean dealer    = false;
 
 	/**
@@ -27,7 +26,6 @@ public class Player {
 	public Player(Participant p){
 		this.playerID   = p.getParticipantId();
 		this.playerName = p.getDisplayName();
-		this.hand = new ArrayList<Cards>();
 	}
 
 	/**

@@ -541,8 +541,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
         }
-        Log.d(TAG, "Message received " + turnData.getData());
-        gameFragment.listView.setText(turnData.getData());
+        Log.d(TAG, "Message received count " + turnData.getCardCount());
+        Log.d(TAG, "Message received type" + turnData.getCardType());
+        gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
     }
 
@@ -769,7 +770,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                         e.printStackTrace();
                     }
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                    Log.d(TAG, "reliablemessage to:" + mRoom.getRoomId());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                             cardJSON.toString().getBytes(), mRoom.getRoomId(), participant.getPlayerID());
                 }else{
