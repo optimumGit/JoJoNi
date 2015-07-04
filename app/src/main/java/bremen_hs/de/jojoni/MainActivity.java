@@ -6,14 +6,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -265,7 +262,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(apiClient,
                 minPlayers, maxPlayers, true);
         startActivityForResult(intent, INVITE_PLAYERS_REQUEST);
-        this.dealCards();
     }
 
     // Handle the ActivityRequests
@@ -339,17 +335,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void startMatch() {
-        turnData = new TurnData();
-        // Some basic turn data
-        turnData.setData("First turn");
-
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
-            Toast.makeText(getApplicationContext(), "Player: " + p.getPlayerName(),Toast.LENGTH_LONG);
         }
-        // TODO: Karten austeilen
-        sendReliableMessageToOthers(turnData.persist());
+        this.dealCards();
         updateUi();
     }
 
