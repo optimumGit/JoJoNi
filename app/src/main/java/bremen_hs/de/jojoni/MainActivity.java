@@ -78,9 +78,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private String mMyPersistentId;
 
-
-    private int cardCounter = 0;
-
+    int cardCounter = 1;
 
     private GoogleApiClient apiClient;
 
@@ -547,7 +545,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onMessageReceived(byte[] data) {
-
         turnData = turnData.unpersist(data);
         String karte;
 
@@ -555,19 +552,18 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
 
-            if (cardCounter == 0){
+
+            if (cardCounter % 3 == 1){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot1);
                 karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
-            }
-            else if (cardCounter == 1){
+            } else if (cardCounter % 3 == 2){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
                 karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
-            }
-            else if (cardCounter == 2){
+            } else if (cardCounter % 3 == 0){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot3);
                 karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
@@ -577,7 +573,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         }
         Log.d(TAG, "Message received count " + turnData.getCardCount());
-        Log.d(TAG, "Message received type" + turnData.getCardType());
+        Log.d(TAG, "Message received type " + turnData.getCardType());
+        Log.d(TAG, "Message received counter " + cardCounter);
         gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
         cardCounter ++;
