@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -77,7 +78,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private String mMyPersistentId;
 
+
     private int cardCounter = 0;
+
 
     private GoogleApiClient apiClient;
 
@@ -831,42 +834,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         final AlertDialog Window = raiseWindowBuilder.create();
 
-  /*      ImageButton btnExit = (ImageButton)view.findViewById(R.id.btnExitApp);
-        btnExit.setOnClickListener(new ImageButton.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.exit(0);
-                Window.dismiss();
-            }
-        });*/
+        TextView raise = (TextView) view.findViewById(R.id.txtVwRaiseWert);
 
 
         Window.show();
 
- /*       AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-        alert.setTitle("Raise");
-        alert.setMessage("Gib einen Wert ein");
-
-        // Set an EditText view to get user input
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        alert.setView(input);
-
-        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Editable value = input.getText();
-                Float coins = Float.parseFloat(value.toString());
-                onRaisebuttonClicked(coins);
-            }
-        });
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
-*/
     }
 
     private void showExitAppPopUp() {
@@ -950,6 +923,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         int count  = 0;//while zaehler
         int cards  = 0;//aktuelle karte
         int rounds = 3;//Anzahl der runden
+        String karte;
 
         while(count < rounds) {
 
@@ -961,12 +935,31 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                            data , mRoom.getRoomId(), participant.getPlayerID());
                 }else{
                     gameManager.setCardToPlayer(stack.get(cards));
+                    hostCardDeal();
                 }
+
                 cards++;
             }
             count++;
         }
         return null;
+    }
+
+    public void hostCardDeal(){
+        String[] karten = new String[3];
+        List<Cards> li = gameManager.getPlayerHand();
+        for(int i = 0; i < li.size(); i++){
+            karten[i] = checkCards(li.get(i));
+        }
+        ImageView vw1 = (ImageView) findViewById(R.id.imgVwSlot1);
+        ImageView vw2 = (ImageView) findViewById(R.id.imgVwSlot2);
+        ImageView vw3 = (ImageView) findViewById(R.id.imgVwSlot3);
+        int Id1 = getResources().getIdentifier(karten[0], "drawable", getPackageName());
+        int Id2 = getResources().getIdentifier(karten[1], "drawable", getPackageName());
+        int Id3 = getResources().getIdentifier(karten[2], "drawable", getPackageName());
+        vw1.setImageResource(Id1);
+        vw1.setImageResource(Id2);
+        vw1.setImageResource(Id3);
     }
 
 }
