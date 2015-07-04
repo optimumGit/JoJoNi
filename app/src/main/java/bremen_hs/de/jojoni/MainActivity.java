@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -89,6 +88,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private GoogleApiClient apiClient;
 
+    HistoryListAdapter adapter;
+
 
     //seka
     GameManager gameManager = new GameManager(mParticipants);
@@ -121,9 +122,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
-        gameFragment.setEnabled(false);
-
-                updateUi();
+        adapter = new HistoryListAdapter(this, arrayOfPlayers);
+        updateUi();
 
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
@@ -202,21 +202,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(),2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
         //buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
     }
 
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -0.0f;
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), playerOut, FOLD);//
         this.sendGameBroadcast(data);
     }
 
@@ -229,7 +229,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), coins, RAISE));
+        sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), coins, RAISE));
     }
     //TODO wird die methode noch gebraucht? sendGameBroadcast kann benutz werden
     private void sendReliableMessageToOthers(byte[] data) {
@@ -350,8 +350,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
-            playerIds.add(id);
-            arrayOfPlayers.add(p);
+            //playerIds.add(id);
+          //  arrayOfPlayers.add(p);
 
         }
         nextPlayerId = mMyPersistentId;
@@ -370,10 +370,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private boolean isMyTurn() {
         if(nextPlayerId.equals(mMyPersistentId)){
-            gameFragment.setEnabled(true);
             return true;
         }
-        gameFragment.setEnabled(false);
         return false;
     }
 
@@ -423,6 +421,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "onParticipantConnected: " + dp.getPlayerID());
         if (!mParticipants.containsKey(dp.getPlayerID())) {
             mParticipants.put(dp.getPlayerID(), dp);
+
+        }
+        if(!arrayOfPlayers.contains(dp)){
+            arrayOfPlayers.add(dp);
+            playerIds.add(dp.getPlayerID());
         }
         //updateUi();
     }
@@ -572,6 +575,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
             }
+            nextPlayerId = turnData.getNextTurnId();
 
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
@@ -581,18 +585,38 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     arrayOfPlayers.get(i).setAction(RAISE);
                 }
             }
-            HistoryListAdapter adapter = new HistoryListAdapter(this, arrayOfPlayers);
-            ListView listView = (ListView) findViewById(R.id.playerHistory);
-            listView.setAdapter(adapter);
+            nextPlayerId = turnData.getNextTurnId();
+            adapter.notifyDataSetChanged();
+            gameFragment.listView.setAdapter(adapter);
+            gameFragment.setEnabled(isMyTurn());
+
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
+
+            for(int i = 0; i < arrayOfPlayers.size(); i++){
+                if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
+                    arrayOfPlayers.get(i).setAction(FOLD);
+                }
+            }
+            nextPlayerId = turnData.getNextTurnId();
+            adapter.notifyDataSetChanged();
+            gameFragment.listView.setAdapter(adapter);
+            gameFragment.setEnabled(isMyTurn());
 
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             //gameManager.call(coins);
+            for(int i = 0; i < arrayOfPlayers.size(); i++){
+                if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
+                    arrayOfPlayers.get(i).setAction(CALL);
+                }
+            }
+            nextPlayerId = turnData.getNextTurnId();
+            adapter.notifyDataSetChanged();
+            gameFragment.listView.setAdapter(adapter);
+            gameFragment.setEnabled(isMyTurn());
         }
         updateUi();
-        isMyTurn();
         cardCounter ++;
     }
 
@@ -815,6 +839,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void onParticipantDisconnected(String messagingId, String persistentId) {
             Log.d(TAG, "onParticipantDisconnected:" + messagingId);
             Player dp = mParticipants.remove(persistentId);
+            for(int i = 0; i<arrayOfPlayers.size(); i++){
+                if(arrayOfPlayers.get(i).getPlayerID().equals(persistentId)){
+                    arrayOfPlayers.remove(i);
+                }
+            }
             if (dp != null) {
                 // Display disconnection toast
                 Toast.makeText(this, dp.getPlayerName() + " disconnected.", Toast.LENGTH_SHORT).show();
@@ -957,7 +986,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             for (Player participant : mParticipants.values()) {
                 if (!participant.getPlayerID().equals(mMyPersistentId)) {
-                    byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
+                    byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds, mMyPersistentId);
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                            data , mRoom.getRoomId(), participant.getPlayerID());

@@ -32,7 +32,7 @@ public class HistoryListAdapter extends ArrayAdapter {
         TextView tvHome = (TextView) convertView.findViewById(R.id.action);
         // Populate the data into the template view using the data object
         tvName.setText(player.getPlayerName());
-        tvHome.setText(player.getPlayerID());
+        tvHome.setText(player.getAction());
         // Return the completed view to render on screen
         return convertView;
     }

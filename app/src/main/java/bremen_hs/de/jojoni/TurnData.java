@@ -113,32 +113,33 @@ public class TurnData {
 
         try {
             JSONObject obj = new JSONObject(st);
-            if (obj.has("player name")) {
-                turnData.playerName = obj.getString("player name");
-                return turnData;
-            }else if(obj.has("action")){
+            if(obj.has("action")){
                 if(obj.get("action").equals("newCard")) {
                     turnData.isNewCard = obj.getString("new card");
                     turnData.cardCount = obj.getInt("card count");
                     turnData.cardType = obj.getInt("card type");
                     String action = obj.getString("action");
+                    turnData.nextTurnId = obj.getString("next turn");
                     turnData.setAction(action);
                     return turnData;
             } else if(obj.get("action").equals("raise")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    turnData.nextTurnId = obj.getString("next turn");
                     turnData.setAction(obj.getString("action"));
                     return turnData;
                 }else if(obj.get("action").equals("call")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    turnData.nextTurnId = obj.getString("next turn");
                     turnData.setAction(obj.getString("action"));
                     return turnData;
                 }else if(obj.get("action").equals("fold")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerName      = obj.getString("player name");
+                    turnData.nextTurnId = obj.getString("next turn");
                     turnData.setAction(obj.getString("action"));
                     return turnData;
                 }
@@ -157,7 +158,7 @@ public class TurnData {
      * @param rounds
      * @return
      */
-    public byte[] CardJson(int cardType, int cardCount, int rounds){
+    public byte[] CardJson(int cardType, int cardCount, int rounds, String playerid){
         String newCard = new String("newCard");
         JSONObject cardJSON = new JSONObject();
         try {
@@ -165,6 +166,7 @@ public class TurnData {
             cardJSON.put("card type",  cardType);
             cardJSON.put("card count", cardCount);
             cardJSON.put("action", newCard);
+            cardJSON.put("next turn", playerid);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -178,11 +180,11 @@ public class TurnData {
      * @param action
      * @return
      */
-    public byte[] receiveGameBroadcast(Player name, float coins, String action){
+    public byte[] receiveGameBroadcast(Player name, String nextParticitpantId, float coins, String action){
         JSONObject cardJSON = new JSONObject();
         try {
-            cardJSON.put("player name", name);
-            cardJSON.put("next turn", name.getPlayerID());
+            cardJSON.put("player name", name.getPlayerName());
+            cardJSON.put("next turn", nextParticitpantId);
             if(!action.equals("fold")) {
                 cardJSON.put("coins", coins);
             }else{
