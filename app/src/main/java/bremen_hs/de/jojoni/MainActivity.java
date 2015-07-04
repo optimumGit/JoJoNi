@@ -928,20 +928,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         while(count < rounds) {
 
             for (Player participant : mParticipants.values()) {
-                if (!participant.equals(mMyPersistentId)) {
+                if (!participant.getPlayerID().equals(mMyPersistentId)) {
                     byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                            data , mRoom.getRoomId(), participant.getPlayerID());
                 }else{
                     gameManager.setCardToPlayer(stack.get(cards));
-                    hostCardDeal();
+
                 }
 
                 cards++;
             }
             count++;
         }
+        hostCardDeal();
         return null;
     }
 
@@ -958,8 +959,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         int Id2 = getResources().getIdentifier(karten[1], "drawable", getPackageName());
         int Id3 = getResources().getIdentifier(karten[2], "drawable", getPackageName());
         vw1.setImageResource(Id1);
-        vw1.setImageResource(Id2);
-        vw1.setImageResource(Id3);
+        vw2.setImageResource(Id2);
+        vw3.setImageResource(Id3);
     }
 
 }
