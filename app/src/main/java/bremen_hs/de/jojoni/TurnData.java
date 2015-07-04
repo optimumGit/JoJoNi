@@ -48,6 +48,11 @@ public class TurnData {
         return this.cardCount;
     }
 
+    public String getPlayerName(){
+        return this.playerName;
+    }
+
+
     public String getBroadcastAction(){
         return this.broadcastAction;
     }

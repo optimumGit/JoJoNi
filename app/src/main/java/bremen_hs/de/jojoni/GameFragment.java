@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -20,7 +21,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     ImageButton raise_button;
     ImageButton call_button;
     ImageButton fold_button;
-    TextView listView;
+    ListView listView;
 
     static int[] BUTTONS = {
             R.id.raise_button, R.id.call_button, R.id.fold_button
@@ -44,7 +45,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         call_button = (ImageButton) v.findViewById(R.id.call_button);
         fold_button = (ImageButton) v.findViewById(R.id.fold_button);
         raise_button = (ImageButton) v.findViewById(R.id.raise_button);
-        listView = (TextView) v.findViewById(R.id.listView);
+        listView = (ListView) v.findViewById(R.id.playerHistory);
         return v;
 
 
@@ -100,7 +101,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     public void setListView(String text){
-        listView.setText(text);
+
 
     }
 

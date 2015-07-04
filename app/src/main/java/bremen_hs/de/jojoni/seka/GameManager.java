@@ -47,8 +47,13 @@ public class GameManager {
 		return shuffle();
 	}
 
+	public void raise(float coins){
+		this.pot.raise(coins);
+	}
 
-
+	public void call(float coins){
+		this.pot.call(coins);
+	}
 	public void playerJoinGame(Participant participent){
 		if(!this.gameHistory.containsKey(participent.getParticipantId())){
 			this.gameHistory.put(participent.getDisplayName(), "join");

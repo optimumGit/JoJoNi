@@ -15,6 +15,7 @@ public class Player {
 
 	private String playerName = null;
     private String playerID   = null;
+	private String action = null;
 	private float playerCoins = 1000; //TODO start coins??
 	private List<Cards> hand  = new ArrayList<Cards>();
 	private boolean dealer    = false;
@@ -106,4 +107,11 @@ public class Player {
 		this.playerCoins =+ coins;
 	}
 
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
 }

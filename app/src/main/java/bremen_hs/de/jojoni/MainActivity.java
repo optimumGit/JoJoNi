@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -72,6 +73,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private TurnData turnData = new TurnData();
     private HashMap<String, Player> mParticipants = new HashMap<>();
     private ArrayList<String> playerIds = new ArrayList<String>();
+    private ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
     private Room mRoom;
     private AlertDialog mAlertDialog;
     // The match turn number, monotonically increasing from 0
@@ -349,6 +351,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
             playerIds.add(id);
+            arrayOfPlayers.add(p);
+
         }
         nextPlayerId = mMyPersistentId;
         this.dealCards();
@@ -569,13 +573,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
-
+            //gameManager.rais(coins);
+            for(int i = 0; i < arrayOfPlayers.size(); i++){
+                if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
+                    arrayOfPlayers.get(i).setAction(RAISE);
+                }
+            }
+            HistoryListAdapter adapter = new HistoryListAdapter(this, arrayOfPlayers);
+            ListView listView = (ListView) findViewById(R.id.playerHistory);
+            listView.setAdapter(adapter);
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
 
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
-
+            //gameManager.call(coins);
         }
         updateUi();
         cardCounter ++;

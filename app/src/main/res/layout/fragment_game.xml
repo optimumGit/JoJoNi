@@ -66,14 +66,14 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="20sp" />
 
-    <TextView
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hallo"
-        android:id="@+id/listView"
+        android:id="@+id/playerHistory"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/imageView" />
+        android:layout_above="@+id/imgVwSlot1"
+        android:layout_marginBottom="15sp" />
 
 
 </RelativeLayout>

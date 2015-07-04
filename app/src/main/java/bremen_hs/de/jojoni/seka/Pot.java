@@ -46,13 +46,18 @@ public class Pot {
 			this.writeToHistory(player, coins);
 		}
 	}
+
+	public void raise(float coins){
+		this.pot =+ coins;
+	}
     /**
      *
      * @param player
      */
 	public void playerFold(Player player){
 		player.getHand().clear();
-        writeToHistory(player);
+		this.pot = 0;
+        this.writeToHistory(player);
 	}
 
     /**
@@ -66,6 +71,10 @@ public class Pot {
 			this.writeToHistory(player, coins);
 		}
     }
+
+	public void call(float coins){
+		this.pot =+ coins;
+	}
 	/**
 	 * 
 	 * @param player
