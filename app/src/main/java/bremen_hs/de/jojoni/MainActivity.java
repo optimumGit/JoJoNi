@@ -64,6 +64,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     final static String RAISE = new String("raise");
     final static String CALL  = new String("call");
     final static String FOLD  = new String("fold");
+    final static String NEW_CARD  = new String("newCard");
 
 
     private boolean mResolvingConnectionFailure = false;
@@ -545,7 +546,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         turnData = turnData.unpersist(data);
         String karte;
 
-        if(turnData.getAction().equals("newCard")){
+        if(turnData.getAction().equals(NEW_CARD)){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
 
@@ -566,9 +567,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 vw.setImageResource(resID);
             }
 
+        } else if(turnData.getAction().equals(RAISE)) {
+            Log.d(TAG, "Message received " + RAISE);
+
+        } else if(turnData.getAction().equals((FOLD))) {
+            Log.d(TAG, "Message received " + FOLD);
+
+        } else if(turnData.getAction().equals((CALL))) {
+            Log.d(TAG, "Message received " + CALL);
 
         }
-        gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
         cardCounter ++;
     }
@@ -976,6 +984,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                         data, mRoom.getRoomId(), participant.getPlayerID());
             }
         }
+        //TODO listen eintrag
     }
 
 }
