@@ -202,12 +202,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onCallButtonClicked() {
-
+        //
     }
 
     @Override
     public void onFoldButtonClicked() {
-        dealCards();
+       // dealCards();
     }
 
     public void onDoneClicked() {
@@ -265,6 +265,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Intent intent = Games.RealTimeMultiplayer.getSelectOpponentsIntent(apiClient,
                 minPlayers, maxPlayers, true);
         startActivityForResult(intent, INVITE_PLAYERS_REQUEST);
+        this.dealCards();
     }
 
     // Handle the ActivityRequests
