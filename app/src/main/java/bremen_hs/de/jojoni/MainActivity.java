@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -197,39 +196,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onRaiseButtonClicked() {
         byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
-        for (Player participant : mParticipants.values()) {
-            if (!participant.getPlayerID().equals(mMyPersistentId)) {
-                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                        data, mRoom.getRoomId(), participant.getPlayerID());
-            }
-        }
-        buildRaiseButtonWindow();
+        this.sendGameBroadcast(data);
+        //buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
         byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
-        for (Player participant : mParticipants.values()) {
-            if (!participant.getPlayerID().equals(mMyPersistentId)) {
-                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                        data, mRoom.getRoomId(), participant.getPlayerID());
-            }
-        }
+        this.sendGameBroadcast(data);
     }
 
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -0.0f;
         byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
-        for (Player participant : mParticipants.values()) {
-            if (!participant.getPlayerID().equals(mMyPersistentId)) {
-                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                        data, mRoom.getRoomId(), participant.getPlayerID());
-            }
-        }
+        this.sendGameBroadcast(data);
     }
 
     public void onDoneClicked() {
@@ -591,6 +572,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
             }
+
+
         }
         Log.d(TAG, "Message received count " + turnData.getCardCount());
         Log.d(TAG, "Message received type " + turnData.getCardType());
@@ -852,31 +835,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         raiseWindowBuilder.setView(view);
 
         final AlertDialog Window = raiseWindowBuilder.create();
-        final int zahl = 0;
 
-
-        final TextView raise = (TextView) view.findViewById(R.id.txtVwRaiseWert);
-        raise.setText("0");
-
-        final SeekBar seek = (SeekBar) findViewById(R.id.seekBar);
-        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-
-                raise.setTextSize(progress);
-                Toast.makeText(getApplicationContext(), String.valueOf(progress),Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+        TextView raise = (TextView) view.findViewById(R.id.txtVwRaiseWert);
 
 
         Window.show();
@@ -1003,6 +963,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         vw1.setImageResource(Id1);
         vw2.setImageResource(Id2);
         vw3.setImageResource(Id3);
+    }
+
+    private void sendGameBroadcast(byte[] data){
+        for (Player participant : mParticipants.values()) {
+            if (!participant.getPlayerID().equals(mMyPersistentId)) {
+                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                        data, mRoom.getRoomId(), participant.getPlayerID());
+            }
+        }
     }
 
 }
