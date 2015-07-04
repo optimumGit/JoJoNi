@@ -5,30 +5,50 @@
     android:background="@drawable/background_horizontal">
 
 
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="90sp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:progressBackgroundTint="#ffffff" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
+        android:gravity="center"
+        android:text="Bitte Einsatz eintragen. Mindestens jedoch Starteinsatz."
         android:id="@+id/txtVwRaiseWert"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30sp"
-        android:textColor="#ffffff" />
+        android:layout_marginTop="20sp"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginRight="20sp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="30sp"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:gravity="center"
+        android:id="@+id/edtTxtRaiseWert"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="100sp"
+        android:textColor="#ffffff"
+        android:text="0000"
+        android:background="#A95400"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Coins"
+        android:id="@+id/txtVwCoins"
+        android:layout_alignBottom="@+id/edtTxtRaiseWert"
+        android:layout_alignLeft="@+id/edtTxtRaiseWert"
+        android:layout_alignStart="@+id/edtTxtRaiseWert"
+        android:layout_marginLeft="110dp"
+        android:layout_marginStart="97dp"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="3dp" />
 
 </RelativeLayout>
