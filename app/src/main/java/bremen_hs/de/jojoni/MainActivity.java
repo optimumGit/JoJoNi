@@ -37,7 +37,6 @@ import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,6 +68,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private boolean mAutoStartSignInFlow = true;
     private TurnData turnData = new TurnData();
     private HashMap<String, Player> mParticipants = new HashMap<>();
+    private ArrayList<String> playerIds = new ArrayList<String>();
     private Room mRoom;
     private AlertDialog mAlertDialog;
     // The match turn number, monotonically increasing from 0
@@ -77,6 +77,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private int mMyTurnIndex;
 
     private String mMyPersistentId;
+
+    private String nextPlayerId;
 
     int cardCounter = 1;
 
@@ -231,7 +233,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for (Player participant : mParticipants.values()) {
             if (!participant.equals(me)) {
                 Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Log.d(TAG, "reliablemessage to:" + mRoom.getRoomId());
                 Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                         data, mRoom.getRoomId(), participant.getPlayerID());
             }
@@ -344,23 +345,27 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
+            playerIds.add(id);
         }
+        nextPlayerId = mMyPersistentId;
         this.dealCards();
         updateUi();
     }
 
+    private String getNextPlayerId(){
+        int pos = playerIds.indexOf(mMyPersistentId);
+        if(playerIds.size() == pos +1) {
+            return playerIds.get(0);
+        }
+        return playerIds.get(pos + 1);
+    }
+
 
     private boolean isMyTurn() {
-        int numParticipants = mParticipants.size();
-        if (numParticipants == 0) {
-            Log.w(TAG, "isMyTurn: no participants - default to true.");
+        if(nextPlayerId.equals(mMyPersistentId)){
             return true;
         }
-        int participantTurnIndex = mMatchTurnNumber % numParticipants;
-
-        Log.d(TAG, String.format("isMyTurn: %d participants, turn #%d, my turn is #%d",
-                numParticipants, mMatchTurnNumber, mMyTurnIndex));
-        return (mMyTurnIndex == participantTurnIndex);
+        return false;
     }
 
 
@@ -410,22 +415,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if (!mParticipants.containsKey(dp.getPlayerID())) {
             mParticipants.put(dp.getPlayerID(), dp);
         }
-
-        updateTurnIndices();
         //updateUi();
     }
 
-    private void updateTurnIndices() {
-        // Turn order is determined by sorting participant IDs, which are consistent across
-        // devices (but not across sessions)
-        ArrayList<String> ids = new ArrayList<>();
-        ids.addAll(mParticipants.keySet());
-        Collections.sort(ids);
-
-        // Get your turn order
-        mMyTurnIndex = ids.indexOf(mMyPersistentId);
-        Log.d(TAG, "My turn index: " + mMyTurnIndex);
-    }
 
 
     @Override
@@ -774,7 +766,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         mMyPersistentId = mRoom.getParticipantId(Games.Players.getCurrentPlayerId(apiClient));
         Participant me = mRoom.getParticipant(mMyPersistentId);
         onParticipantConnected(me);
-        updateTurnIndices();
     }
 
     @Override
@@ -810,7 +801,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     // Last player left in an RTMP game, leave
                     leaveRoom();
                 } else {
-                    updateTurnIndices();
+                    playerIds.remove(persistentId);
                 }
             }
     }
