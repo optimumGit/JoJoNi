@@ -197,17 +197,19 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        buildRaiseButtonWindow();
+        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
+        //buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
-        //
+        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
     }
 
     @Override
     public void onFoldButtonClicked() {
-       // dealCards();
+        float playerOut = -0.0f;
+        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
     }
 
     public void onDoneClicked() {
