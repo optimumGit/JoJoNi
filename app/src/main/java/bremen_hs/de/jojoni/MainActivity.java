@@ -519,6 +519,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         startActivityForResult(i, WAITING_ROOM_REQUEST);
     }
 
+
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
         Log.d(TAG, "onJoinedRoom: " + statusCode + ":" + room);
