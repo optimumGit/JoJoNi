@@ -158,7 +158,7 @@ public class TurnData {
      * @param action
      * @return
      */
-    public byte[] gameBroadcast(Player name, float coins, String action){
+    public byte[] receiveGameBroadcast(Player name, float coins, String action){
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("player name", name);

@@ -195,21 +195,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
         //buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
-        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
     }
 
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -0.0f;
-        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
         this.sendGameBroadcast(data);
     }
 
@@ -222,7 +222,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.gameBroadcast(mParticipants.get(mMyPersistentId), coins, RAISE));
+        sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), coins, RAISE));
     }
 
     private void sendReliableMessageToOthers(byte[] data) {
