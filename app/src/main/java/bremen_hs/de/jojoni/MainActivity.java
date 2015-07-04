@@ -195,19 +195,40 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
+        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 2.0f/*set coins*/, RAISE);
+        for (Player participant : mParticipants.values()) {
+            if (!participant.getPlayerID().equals(mMyPersistentId)) {
+                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                        data, mRoom.getRoomId(), participant.getPlayerID());
+            }
+        }
         //buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
-        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
+        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), 1.0f/*call coins*/, CALL);//
+        for (Player participant : mParticipants.values()) {
+            if (!participant.getPlayerID().equals(mMyPersistentId)) {
+                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                        data, mRoom.getRoomId(), participant.getPlayerID());
+            }
+        }
     }
 
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -0.0f;
-        this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
+        byte [] data = this.turnData.gameBroadcast(mParticipants.get(mMyPersistentId), playerOut, FOLD);//
+        for (Player participant : mParticipants.values()) {
+            if (!participant.getPlayerID().equals(mMyPersistentId)) {
+                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
+                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
+                        data, mRoom.getRoomId(), participant.getPlayerID());
+            }
+        }
     }
 
     public void onDoneClicked() {
