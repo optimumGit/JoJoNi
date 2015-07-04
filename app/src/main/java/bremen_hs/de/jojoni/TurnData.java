@@ -113,20 +113,23 @@ public class TurnData {
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    return turnData;
                 }else if(obj.get("action").equals("call")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    return turnData;
                 }else if(obj.get("action").equals("fold")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerName      = obj.getString("player name");
+                    return turnData;
                 }
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return  null;
+        return turnData;
     }
 
     /**
