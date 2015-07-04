@@ -936,12 +936,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     public byte[] dealCards(){
         List<Cards> stack = gameManager.getStack();
 
-        int count  = 0;//while zaehler
-        int cards  = 0;//aktuelle karte
-        int rounds = 3;//Anzahl der runden
+        int count  = 0;//while   counter
+        int cards  = 0;//current counter
+        int rounds = 3;//round   counter
 
         while(count < rounds) {
-
             for (Player participant : mParticipants.values()) {
                 if (!participant.equals(mMyPersistentId)) {
                     byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);

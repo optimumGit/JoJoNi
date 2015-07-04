@@ -44,6 +44,14 @@ public class TurnData {
         return this.cardCount;
     }
 
+    public String getBroadcastAction(){
+        return this.broadcastAction;
+    }
+
+    public float getPlayerCoins(){
+        return this.playerSetCoins;
+    }
+
     /**
      *
      * @return
@@ -94,6 +102,7 @@ public class TurnData {
             JSONObject obj = new JSONObject(st);
             if (obj.has("player name")) {
                 turnData.playerName = obj.getString("player name");
+                return turnData;
             }else if(obj.has("new card")){
                 turnData.isNewCard = true;
                 turnData.cardCount = obj.getInt("card count");
@@ -103,24 +112,20 @@ public class TurnData {
                 if(obj.get("action").equals("raise")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
-                    turnData.playerName = obj.getString("player name");
+                    turnData.playerName      = obj.getString("player name");
                 }else if(obj.get("action").equals("call")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
-                    turnData.playerName = obj.getString("player name");
+                    turnData.playerName      = obj.getString("player name");
                 }else if(obj.get("action").equals("fold")){
                     turnData.broadcastAction = obj.getString("action");
-                    turnData.playerName = obj.getString("player name");
+                    turnData.playerName      = obj.getString("player name");
                 }
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
-
-
         return  null;
     }
 
