@@ -591,6 +591,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Log.d(TAG, "Message received " + CALL);
             //gameManager.call(coins);
         }
+        isMyTurn();
+
         updateUi();
         cardCounter ++;
     }
