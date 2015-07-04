@@ -551,30 +551,29 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onMessageReceived(byte[] data) {
-        cardCounter ++;
+
         turnData = turnData.unpersist(data);
         String karte;
+
         if(turnData.isNewCard()){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
 
-            Player player = mParticipants.get(mMyPersistentId);
-
-            if (cardCounter == 1){
+            if (cardCounter == 0){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot1);
-                karte = checkCards(player, 1);
+                karte = checkCards(card);
+                int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
+                vw.setImageResource(resID);
+            }
+            else if (cardCounter == 1){
+                ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
+                karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
             }
             else if (cardCounter == 2){
-                ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
-                karte = checkCards(player, 2);
-                int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
-                vw.setImageResource(resID);
-            }
-            else if (cardCounter == 3){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot3);
-                karte = checkCards(player, 3);
+                karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
             }
@@ -585,16 +584,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "Message received type" + turnData.getCardType());
         gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
+        cardCounter ++;
     }
 
-    public String checkCards(Player player, int counter){
-        Player pl = player;
-        int c = counter;
+    public String checkCards(Cards card){
 
-        List<Cards> l = pl.getHand();
-        Cards card = l.get(c - 1);
-        int wert = card.getCardCount();
-        int symbol = card.getCardTyp();
+        Cards ca = card;
+
+        int wert = ca.getCardCount();
+        int symbol = ca.getCardTyp();
 
         String karte = null;
 
