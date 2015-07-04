@@ -370,8 +370,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private boolean isMyTurn() {
         if(nextPlayerId.equals(mMyPersistentId)){
+            gameFragment.setEnabled(true);
             return true;
         }
+        gameFragment.setEnabled(false);
         return false;
     }
 
