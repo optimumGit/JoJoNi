@@ -21,6 +21,7 @@ public class TurnData {
     private String broadcastAction = null;
     private String isNewCard     = null;
     private String action = null;
+    private String nextTurnId = null;
     private float playerSetCoins = 0.0f;
     private int cardType;//new Integer(null);
     private int cardCount;//new Integer(null);
@@ -52,6 +53,9 @@ public class TurnData {
         return this.playerName;
     }
 
+    public String getNextTurnId(){
+        return this.nextTurnId;
+    }
 
     public String getBroadcastAction(){
         return this.broadcastAction;
