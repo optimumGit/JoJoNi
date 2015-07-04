@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setGameListener(this);
         mainFragment.setMainListener(this);
 
-
+        gameFragment.setEnabled(false);
 
                 updateUi();
 
@@ -591,9 +591,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Log.d(TAG, "Message received " + CALL);
             //gameManager.call(coins);
         }
-        isMyTurn();
-
         updateUi();
+        isMyTurn();
         cardCounter ++;
     }
 
