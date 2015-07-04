@@ -524,6 +524,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "onJoinedRoom: " + statusCode + ":" + room);
     }
 
+
     @Override
     public void onLeftRoom(int statusCode, String s) {
         mRoom = null;
