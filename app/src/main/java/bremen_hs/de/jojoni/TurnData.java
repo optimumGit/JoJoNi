@@ -20,7 +20,7 @@ public class TurnData {
     private String playerName    = null;
     private String playerAction  = null;
     private String broadcastAction = null;
-    private boolean isNewCard    = false;
+    private String isNewCard     = null;
     private float playerSetCoins = 0.0f;
     private int cardType;//new Integer(null);
     private int cardCount;//new Integer(null);
@@ -36,7 +36,7 @@ public class TurnData {
         return this.cardType;
     }
 
-    public boolean isNewCard(){
+    public String isNewCard(){
         return this.isNewCard;
     }
 
@@ -104,7 +104,8 @@ public class TurnData {
                 turnData.playerName = obj.getString("player name");
                 return turnData;
             }else if(obj.has("new card")){
-                turnData.isNewCard = true;
+                boolean isNewCard = true;
+                turnData.isNewCard = obj.getString("new card");
                 turnData.cardCount = obj.getInt("card count");
                 turnData.cardType  = obj.getInt("card type");
                 return turnData;
@@ -140,11 +141,13 @@ public class TurnData {
      * @return
      */
     public byte[] CardJson(int cardType, int cardCount, int rounds){
+        String newCard = new String("newCard");
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("new card",   rounds);
             cardJSON.put("card type",  cardType);
             cardJSON.put("card count", cardCount);
+            cardJSON.put("action", newCard);
         } catch (JSONException e) {
             e.printStackTrace();
         }
