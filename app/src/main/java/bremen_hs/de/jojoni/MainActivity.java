@@ -224,7 +224,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void onRaisebuttonClicked(float coins){
         sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), coins, RAISE));
     }
-
+    //TODO wird die methode noch gebraucht? sendGameBroadcast kann benutz werden
     private void sendReliableMessageToOthers(byte[] data) {
         Log.d(TAG, "sendRliableMessage");
         Player me = mParticipants.get(mMyPersistentId);

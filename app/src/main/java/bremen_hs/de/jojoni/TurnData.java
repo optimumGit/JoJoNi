@@ -162,6 +162,7 @@ public class TurnData {
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("player name", name);
+            cardJSON.put("next turn", name.getPlayerID());
             if(!action.equals("fold")) {
                 cardJSON.put("coins", coins);
             }else{
