@@ -7,7 +7,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 
 import bremen_hs.de.jojoni.seka.Player;
 
@@ -21,6 +20,7 @@ public class TurnData {
     private String playerAction  = null;
     private String broadcastAction = null;
     private String isNewCard     = null;
+    private String action = null;
     private float playerSetCoins = 0.0f;
     private int cardType;//new Integer(null);
     private int cardCount;//new Integer(null);
@@ -36,8 +36,12 @@ public class TurnData {
         return this.cardType;
     }
 
-    public String isNewCard(){
-        return this.isNewCard;
+    public String getAction(){
+        return this.action;
+    }
+
+    public void setAction(String action){
+        this.action = action;
     }
 
     public int getCardCount(){
@@ -103,26 +107,36 @@ public class TurnData {
             if (obj.has("player name")) {
                 turnData.playerName = obj.getString("player name");
                 return turnData;
-            }else if(obj.has("new card")){
+   /*         }else if(obj.has("new card")){
                 boolean isNewCard = true;
                 turnData.isNewCard = obj.getString("new card");
                 turnData.cardCount = obj.getInt("card count");
                 turnData.cardType  = obj.getInt("card type");
-                return turnData;
+                return turnData;*/
             }else if(obj.has("action")){
-                if(obj.get("action").equals("raise")){
+                if(obj.get("action").equals("newCard")) {
+                    turnData.isNewCard = obj.getString("new card");
+                    turnData.cardCount = obj.getInt("card count");
+                    turnData.cardType = obj.getInt("card type");
+                    String action = obj.getString("action");
+                    turnData.setAction(action);
+                    return turnData;
+            } else if(obj.get("action").equals("raise")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    setAction(obj.getString("action"));
                     return turnData;
                 }else if(obj.get("action").equals("call")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
                     turnData.playerName      = obj.getString("player name");
+                    setAction(obj.getString("action"));
                     return turnData;
                 }else if(obj.get("action").equals("fold")){
                     turnData.broadcastAction = obj.getString("action");
                     turnData.playerName      = obj.getString("player name");
+                    setAction(obj.getString("action"));
                     return turnData;
                 }
             }

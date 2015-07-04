@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -546,10 +545,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         turnData = turnData.unpersist(data);
         String karte;
 
-        if(turnData.isNewCard()){
+        if(turnData.getAction().equals("newCard")){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
-
 
             if (cardCounter % 3 == 1){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot1);
@@ -570,9 +568,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
 
         }
-        Log.d(TAG, "Message received count " + turnData.getCardCount());
-        Log.d(TAG, "Message received type " + turnData.getCardType());
-        Log.d(TAG, "Message received counter " + cardCounter);
         gameFragment.listView.setText(" " + turnData.getCardType());
         updateUi();
         cardCounter ++;
