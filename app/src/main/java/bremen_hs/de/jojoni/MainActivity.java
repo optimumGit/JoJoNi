@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -203,7 +204,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                         data, mRoom.getRoomId(), participant.getPlayerID());
             }
         }
-        //buildRaiseButtonWindow();
+        buildRaiseButtonWindow();
     }
 
     @Override
@@ -590,8 +591,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
             }
-
-
         }
         Log.d(TAG, "Message received count " + turnData.getCardCount());
         Log.d(TAG, "Message received type " + turnData.getCardType());
@@ -853,8 +852,31 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         raiseWindowBuilder.setView(view);
 
         final AlertDialog Window = raiseWindowBuilder.create();
+        final int zahl = 0;
 
-        TextView raise = (TextView) view.findViewById(R.id.txtVwRaiseWert);
+
+        final TextView raise = (TextView) view.findViewById(R.id.txtVwRaiseWert);
+        raise.setText("0");
+
+        final SeekBar seek = (SeekBar) findViewById(R.id.seekBar);
+        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+
+                raise.setTextSize(progress);
+                Toast.makeText(getApplicationContext(), String.valueOf(progress),Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
 
         Window.show();
