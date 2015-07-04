@@ -551,6 +551,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void onMessageReceived(byte[] data) {
         cardCounter ++;
         turnData = turnData.unpersist(data);
+        String karte;
         if(turnData.isNewCard()){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
@@ -559,15 +560,21 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             if (cardCounter == 1){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot1);
-                vw.setImageResource(R.drawable.pik_dame);
+                karte = checkCards(player, 1);
+                int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
+                vw.setImageResource(resID);
             }
             else if (cardCounter == 2){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
-                vw.setImageResource(R.drawable.pik_koenig);
+                karte = checkCards(player, 2);
+                int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
+                vw.setImageResource(resID);
             }
             else if (cardCounter == 3){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot3);
-                vw.setImageResource(R.drawable.pik_ass);
+                karte = checkCards(player, 3);
+                int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
+                vw.setImageResource(resID);
             }
 
 
@@ -578,7 +585,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         updateUi();
     }
 
-    public void checkCards(Player player, int counter){
+    public String checkCards(Player player, int counter){
         Player pl = player;
         int c = counter;
 
@@ -587,7 +594,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         int wert = card.getCardCount();
         int symbol = card.getCardTyp();
 
-        String karte;
+        String karte = null;
 
         if (symbol == 0) {
 
@@ -623,14 +630,101 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
         else if (symbol == 1){
 
+            switch (wert){
+                case 0:
+                    karte = "herz_sechs";
+                    break;
+                case 1:
+                    karte = "herz_sieben";
+                    break;
+                case 2:
+                    karte = "herz_acht";
+                    break;
+                case 3:
+                    karte = "herz_neun";
+                    break;
+                case 4:
+                    karte = "herz_zehn";
+                    break;
+                case 5:
+                    karte = "herz_bube";
+                    break;
+                case 6:
+                    karte = "herz_dame";
+                    break;
+                case 7:
+                    karte = "herz_koenig";
+                    break;
+                case 8:
+                    karte = "herz_ass";
+                    break;
+            }
         }
         else if (symbol == 2){
 
+            switch (wert){
+                case 0:
+                    karte = "kreuz_sechs";
+                    break;
+                case 1:
+                    karte = "kreuz_sieben";
+                    break;
+                case 2:
+                    karte = "kreuz_acht";
+                    break;
+                case 3:
+                    karte = "kreuz_neun";
+                    break;
+                case 4:
+                    karte = "kreuz_zehn";
+                    break;
+                case 5:
+                    karte = "kreuz_bube";
+                    break;
+                case 6:
+                    karte = "kreuz_dame";
+                    break;
+                case 7:
+                    karte = "kreuz_koenig";
+                    break;
+                case 8:
+                    karte = "kreuz_ass";
+                    break;
+            }
         }
         else if (symbol == 3){
 
+            switch (wert){
+                case 0:
+                    karte = "pik_sechs";
+                    break;
+                case 1:
+                    karte = "pik_sieben";
+                    break;
+                case 2:
+                    karte = "pik_acht";
+                    break;
+                case 3:
+                    karte = "pik_neun";
+                    break;
+                case 4:
+                    karte = "pik_zehn";
+                    break;
+                case 5:
+                    karte = "pik_bube";
+                    break;
+                case 6:
+                    karte = "pik_dame";
+                    break;
+                case 7:
+                    karte = "pik_koenig";
+                    break;
+                case 8:
+                    karte = "pik_ass";
+                    break;
+            }
         }
-
+        return karte;
 
     }
 
