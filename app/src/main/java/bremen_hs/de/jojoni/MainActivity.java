@@ -830,7 +830,29 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void buildRaiseButtonWindow() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        AlertDialog.Builder raiseWindowBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.raise_window, null);
+        raiseWindowBuilder.setView(view);
+
+        final AlertDialog Window = raiseWindowBuilder.create();
+
+  /*      ImageButton btnExit = (ImageButton)view.findViewById(R.id.btnExitApp);
+        btnExit.setOnClickListener(new ImageButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.exit(0);
+                Window.dismiss();
+            }
+        });*/
+
+
+        Window.show();
+
+ /*       AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setTitle("Raise");
         alert.setMessage("Gib einen Wert ein");
@@ -853,7 +875,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             }
         });
         alert.show();
-
+*/
     }
 
     private void showExitAppPopUp() {
@@ -934,11 +956,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     public byte[] dealCards(){
         List<Cards> stack = gameManager.getStack();
 
-        int count  = 0;//while   counter
-        int cards  = 0;//current counter
-        int rounds = 3;//round   counter
+        int count  = 0;//while zaehler
+        int cards  = 0;//aktuelle karte
+        int rounds = 3;//Anzahl der runden
 
         while(count < rounds) {
+
             for (Player participant : mParticipants.values()) {
                 if (!participant.equals(mMyPersistentId)) {
                     byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds);
