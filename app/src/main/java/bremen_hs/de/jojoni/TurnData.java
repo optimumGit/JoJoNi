@@ -19,6 +19,7 @@ public class TurnData {
     private final String TAG     = "TurnData";
     private String playerName    = null;
     private String playerAction  = null;
+    private String broadcastAction = null;
     private boolean isNewCard    = false;
     private float playerSetCoins = 0.0f;
     private int cardType;//new Integer(null);
@@ -88,20 +89,39 @@ public class TurnData {
 
         TurnData turnData = new TurnData();
 
+
         try {
             JSONObject obj = new JSONObject(st);
             if (obj.has("player name")) {
                 turnData.playerName = obj.getString("player name");
             }else if(obj.has("new card")){
                 turnData.isNewCard = true;
-                turnData.cardCount = Integer.parseInt(obj.getString("card count"));
-                turnData.cardType  = Integer.parseInt(obj.getString("card type"));
+                turnData.cardCount = obj.getInt("card count");
+                turnData.cardType  = obj.getInt("card type");
+                return turnData;
+            }else if(obj.has("action")){
+                if(obj.get("action").equals("raise")){
+                    turnData.broadcastAction = obj.getString("action");
+                    turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
+                    turnData.playerName = obj.getString("player name");
+                }else if(obj.get("action").equals("call")){
+                    turnData.broadcastAction = obj.getString("action");
+                    turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
+                    turnData.playerName = obj.getString("player name");
+                }else if(obj.get("action").equals("fold")){
+                    turnData.broadcastAction = obj.getString("action");
+                    turnData.playerName = obj.getString("player name");
+                }
             }
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return turnData;
+
+
+
+
+        return  null;
     }
 
     /**

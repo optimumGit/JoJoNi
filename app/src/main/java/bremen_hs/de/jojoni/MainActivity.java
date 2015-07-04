@@ -62,9 +62,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final int SIGN_IN_REQUEST = 9001;
     final static int WAITING_ROOM_REQUEST = 10001;
     final static int RC_INVITATION_INBOX = 20000;
-    final static String RAIS = new String("rais");
-    final static String CALL = new String("call");
-    final static String FOLD = new String("fold");
+    final static String RAISE = new String("raise");
+    final static String CALL  = new String("call");
+    final static String FOLD  = new String("fold");
 
 
     private boolean mResolvingConnectionFailure = false;
@@ -219,7 +219,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.gameBroadcast(mParticipants.get(mMyPersistentId), coins, RAIS));
+        sendReliableMessageToOthers(turnData.gameBroadcast(mParticipants.get(mMyPersistentId), coins, RAISE));
     }
 
     private void sendReliableMessageToOthers(byte[] data) {
