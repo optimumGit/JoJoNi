@@ -17,6 +17,7 @@ public class Player {
     private String playerID   = null;
 	private String action = "no action yet";
 	private float playerCoins = 1000; //TODO start coins??
+	private float handResult  = 0.0f;
 	private List<Cards> hand  = new ArrayList<Cards>();
 	private boolean dealer    = false;
 	private boolean hasTurn = false;
@@ -40,7 +41,21 @@ public class Player {
         this.playerID   = playerID;
 	}
 
-    /**
+
+	public void setHandResult(float result){
+		this.handResult = result;
+	}
+
+
+	/**
+	 *
+	 * @return
+	 */
+	public float getHandResult(){
+		return this.handResult;
+	}
+
+	/**
      *
      * @return
      */

@@ -40,6 +40,7 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import bremen_hs.de.jojoni.seka.Cards;
@@ -61,10 +62,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private static final int SIGN_IN_REQUEST = 9001;
     final static int WAITING_ROOM_REQUEST = 10001;
     final static int RC_INVITATION_INBOX = 20000;
-    final static String RAISE = new String("raise");
-    final static String CALL  = new String("call");
-    final static String FOLD  = new String("fold");
     final static String NEW_CARD  = new String("newCard");
+    final static String RESULT    = new String("result");
+    final static String RAISE     = new String("raise");
+    final static String CALL      = new String("call");
+    final static String FOLD      = new String("fold");
 
 
     private boolean mResolvingConnectionFailure = false;
@@ -605,6 +607,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             gameManager.call(turnData.getPlayerCoins());
             synchronizePot();
         }
+        if(playerIds.size() == 1){
+            this.gameFinished();
+        }
         updateUi();
         cardCounter ++;
     }
@@ -1054,4 +1059,25 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         //TODO listen eintrag
     }
 
+    private void gameFinished(){
+        int call   = 0;
+        int raise  = 0;
+        int player = playerIds.size();
+
+        for(int i = 0; i < player; i++){
+            if(mParticipants.get(playerIds.get(i)).getAction().equals("call")){
+                call++;
+            }else if(mParticipants.get(playerIds.get(i)).getAction().equals("raise")){
+                raise++;
+            }
+        }
+        if(call == player){
+            float result = gameManager.getCardsResult(mParticipants.get(mMyPersistentId).getHand());
+            mParticipants.get(mMyPersistentId).setHandResult(result);
+            this.sendGameBroadcast(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), null, result, RESULT));
+            //todo call game over method and put result in own list
+        }else if(player == raise){
+            //todo call game over method
+        }
+    }
 }
