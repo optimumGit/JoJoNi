@@ -230,7 +230,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         nextPlayerId = getNextPlayerId();
         updateListAfterButtonClick(FOLD);
         updateListForActivePlayer();
-        float playerOut = -0.0f;
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
         this.playerIds.remove(mMyPersistentId);
