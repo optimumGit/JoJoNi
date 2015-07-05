@@ -112,7 +112,7 @@ public class Player {
 	 */
 	public float setCoinsInGame(float coins){
 		if(this.playerCoins >= coins){
-			this.playerCoins =- coins;
+			this.playerCoins = this.playerCoins - coins;
 			return coins;
 		}else{
 			return 0;

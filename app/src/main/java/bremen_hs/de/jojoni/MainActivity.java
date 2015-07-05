@@ -235,6 +235,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         // update the buttons
         gameFragment.setEnabled(isMyTurn());
+        synchronizeOwnCoins();
+        synchronizePot();
         this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
     }
 
@@ -691,6 +693,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
      *
      * @param action to set
      */
+    private void synchronizeOwnCoins(){
+        TextView vwCoins = (TextView) findViewById(R.id.txtVwOwnCoins);
+        String text = Float.toString(mParticipants.get(mMyPersistentId).getPlayerCoins());
+        vwCoins.setText(text);
+    }
+
     public void updateList(String action){
         for(int i = 0; i < arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
@@ -1003,6 +1011,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     gameFragment.setEnabled(isMyTurn());
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
                     synchronizePot();
+                    synchronizeOwnCoins();
                     Window.dismiss();
                 }
             }
