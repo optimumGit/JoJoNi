@@ -346,6 +346,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 roomConfigBuilder.addPlayersToInvite(invitees);
             }
 
+            arrayOfPlayers.clear();
             // Build the room and start the match
             Games.RealTimeMultiplayer.create(apiClient, roomConfigBuilder.build());
         }
@@ -1030,6 +1031,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             karten[i] = checkCards(li.get(i));
         }
         gameFragment.setEnabled(isMyTurn());
+        Collections.sort(playerIds);
         ImageView vw1 = (ImageView) findViewById(R.id.imgVwSlot1);
         ImageView vw2 = (ImageView) findViewById(R.id.imgVwSlot2);
         ImageView vw3 = (ImageView) findViewById(R.id.imgVwSlot3);
