@@ -227,6 +227,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         nextPlayerId = getNextPlayerId();
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
+        this.playerIds.remove(mMyPersistentId);
         gameFragment.setEnabled(isMyTurn());
     }
 
@@ -881,7 +882,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     Toast.makeText(getApplicationContext(), "Bitte geben Sie mindestens den Startbetrag ein!", Toast.LENGTH_LONG).show();
                     raise.setText("0000");
                 } else if (raiseCoin > mParticipants.get(mMyPersistentId).getPlayerCoins()){
-                    Toast.makeText(getApplicationContext(), "Sie können nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Sie kï¿½nnen nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
                     raise.setText("0000");
                 } else {
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
