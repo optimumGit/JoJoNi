@@ -1,11 +1,6 @@
 package bremen_hs.de.jojoni.seka;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-
 /**
  * @author  Johann Luziv
  * @version 0.1
