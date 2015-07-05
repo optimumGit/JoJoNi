@@ -208,7 +208,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
         //buildRaiseButtonWindow();
-        this.gameManager.playerRais(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
+        this.gameManager.playerRaise(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
     }
 
     @Override
@@ -861,7 +861,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         final AlertDialog Window = raiseWindowBuilder.create();
 
-        EditText raise = (EditText) view.findViewById(R.id.edtTxtRaiseWert);
+        final EditText raise = (EditText) view.findViewById(R.id.edtTxtRaiseWert);
+        final float raiseCoin = Float.valueOf(raise.getText().toString());
+        Window.show();
         raise.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -875,7 +877,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if (raiseCoin < gameManager.getMinCall()){
+                    Toast.makeText(getApplicationContext(), "Bitte geben Sie mindestens den Startbetrag ein!", Toast.LENGTH_LONG).show();
+                    raise.setText("0000");
+                } else if (raiseCoin > mParticipants.get(mMyPersistentId).getPlayerCoins()){
+                    Toast.makeText(getApplicationContext(), "Sie können nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
+                    raise.setText("0000");
+                } else {
+                    gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
+                }
             }
         });
 

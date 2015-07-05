@@ -62,6 +62,10 @@ public class Player {
 		return this.hand;
 	}
 
+	public float getPlayerCoins(){
+		return this.playerCoins;
+	}
+
 	/**
 	 *
 	 * @param dealerButton
@@ -98,6 +102,7 @@ public class Player {
 			return 0;
 		}
 	}
+
 
 	/**
 	 *
