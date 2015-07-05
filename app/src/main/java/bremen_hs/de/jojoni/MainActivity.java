@@ -433,7 +433,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             arrayOfPlayers.add(dp);
             playerIds.add(dp.getPlayerID());
         }
-        //updateUi();
     }
 
 
