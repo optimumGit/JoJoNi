@@ -20,6 +20,7 @@ public class GameManager {
 	private CardStack cardStack = null;
 	private Player player = null;
 	private Pot pot = null;
+	private Results results = null;
 	private float minCall = 50;
 	/**
 	 *
@@ -29,6 +30,7 @@ public class GameManager {
 		this.cardStack   = new CardStack();
 		this.gameHistory = new HashMap<String, Object>();
 		this.mParticipants = mParticipants;
+		this.results = new Results();
 	}
 
 	public void setCardToPlayer(Cards card){
@@ -63,6 +65,9 @@ public class GameManager {
 		this.minCall = minCall;
 	}
 
+	public float getCardsResult(List<Cards> hand){
+		return this.results.results(hand);
+	}
 
 	public void playerJoinGame(Participant participent){
 		if(!this.gameHistory.containsKey(participent.getParticipantId())){
