@@ -57,6 +57,10 @@ public class Pot {
 		}
     }
 
+	/**
+	 *
+	 * @param coins
+	 */
 	public void call(float coins){
 		this.pot =+ coins;
 	}
