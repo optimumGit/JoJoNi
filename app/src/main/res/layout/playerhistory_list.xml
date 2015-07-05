@@ -4,7 +4,7 @@
     android:padding="6dip" >
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/playerIcon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
@@ -17,9 +17,10 @@
         android:id="@+id/action"
         android:layout_width="fill_parent"
         android:layout_height="26dip"
+        android:textColor="#ffffff"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/icon"
+        android:layout_toRightOf="@id/playerIcon"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:text="Description"
@@ -30,10 +31,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/action"
+        android:textColor="#ffffffff"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/icon"
+        android:layout_toRightOf="@id/playerIcon"
         android:gravity="center_vertical"
         android:text="Example application"
         android:textSize="16sp" />

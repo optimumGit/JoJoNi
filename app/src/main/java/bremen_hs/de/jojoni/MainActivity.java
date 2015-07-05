@@ -204,16 +204,20 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onRaiseButtonClicked() {
         nextPlayerId = getNextPlayerId();
+        updateListAfterButtonClick(RAISE);
+        updateListForActivePlayer();
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
-        //buildRaiseButtonWindow();
+        buildRaiseButtonWindow();
         this.gameManager.playerRaise(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
     }
 
     @Override
     public void onCallButtonClicked() {
         nextPlayerId = getNextPlayerId();
+        updateListAfterButtonClick(CALL);
+        updateListForActivePlayer();
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
@@ -222,12 +226,36 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onFoldButtonClicked() {
-        float playerOut = -0.0f;
         nextPlayerId = getNextPlayerId();
+        updateListAfterButtonClick(FOLD);
+        updateListForActivePlayer();
+        float playerOut = -0.0f;
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
         this.playerIds.remove(mMyPersistentId);
         gameFragment.setEnabled(isMyTurn());
+    }
+
+    private void updateListAfterButtonClick(String action){
+        for(int i = 0; i< arrayOfPlayers.size(); i++){
+            if(arrayOfPlayers.get(i).getPlayerID().equals(mMyPersistentId)){
+                arrayOfPlayers.get(i).setAction(action);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        gameFragment.listView.setAdapter(adapter);
+    }
+
+    private void updateListForActivePlayer(){
+        for(int i = 0; i< arrayOfPlayers.size(); i++){
+            if(arrayOfPlayers.get(i).getPlayerID().equals(nextPlayerId)){
+                arrayOfPlayers.get(i).setHasTurn(true);
+            } else {
+                arrayOfPlayers.get(i).setHasTurn(false);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        gameFragment.listView.setAdapter(adapter);
     }
 
     // implementing the mainFragment interface
@@ -564,13 +592,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
             updateList(RAISE);
+            updateListForActivePlayer();
             gameManager.raise(turnData.getPlayerCoins());
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
             updateList(FOLD);
+            updateListForActivePlayer();
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             updateList(CALL);
+            updateListForActivePlayer();
             gameManager.call(turnData.getPlayerCoins());
         }
         updateUi();

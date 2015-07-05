@@ -19,6 +19,7 @@ public class Player {
 	private float playerCoins = 1000; //TODO start coins??
 	private List<Cards> hand  = new ArrayList<Cards>();
 	private boolean dealer    = false;
+	private boolean hasTurn = false;
 
 	/**
 	 *
@@ -118,5 +119,13 @@ public class Player {
 
 	public void setAction(String action) {
 		this.action = action;
+	}
+
+	public boolean isHasTurn() {
+		return hasTurn;
+	}
+
+	public void setHasTurn(boolean hasTurn) {
+		this.hasTurn = hasTurn;
 	}
 }

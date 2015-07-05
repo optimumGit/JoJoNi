@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,9 +31,15 @@ public class HistoryListAdapter extends ArrayAdapter {
         // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.playerName);
         TextView tvHome = (TextView) convertView.findViewById(R.id.action);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.playerIcon);
         // Populate the data into the template view using the data object
         tvName.setText(player.getPlayerName());
         tvHome.setText(player.getAction());
+        if(player.isHasTurn()){
+            imageView.setImageResource(R.drawable.ic_launcher2);
+        } else{
+            imageView.setImageResource(R.drawable.ic_launcher);
+        }
         // Return the completed view to render on screen
         return convertView;
     }
