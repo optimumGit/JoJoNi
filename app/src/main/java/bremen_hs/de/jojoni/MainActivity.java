@@ -226,6 +226,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onFoldButtonClicked() {
+        float playerOut = -1.0f;
         nextPlayerId = getNextPlayerId();
         updateListAfterButtonClick(FOLD);
         updateListForActivePlayer();
@@ -598,6 +599,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Log.d(TAG, "Message received " + FOLD);
             updateList(FOLD);
             updateListForActivePlayer();
+           for(int i = 0; i < playerIds.size(); i++){
+               if(playerIds.get(i).equals(turnData.getPlayerId())){
+                   playerIds.remove(i);
+               }
+           }
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             updateList(CALL);
