@@ -21,34 +21,31 @@
         android:layout_marginRight="20sp" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="30sp"
         android:inputType="numberDecimal"
         android:ems="10"
         android:gravity="center"
         android:id="@+id/edtTxtRaiseWert"
-        android:layout_alignParentBottom="false"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="100sp"
         android:textColor="#ffffff"
         android:text="0000"
         android:background="#A95400"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp" />
+        android:layout_below="@+id/txtVwRaiseWert"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="20dp" />
 
-    <TextView
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Coins"
-        android:id="@+id/txtVwCoins"
-        android:layout_alignBottom="@+id/edtTxtRaiseWert"
-        android:layout_alignLeft="@+id/edtTxtRaiseWert"
-        android:layout_alignStart="@+id/edtTxtRaiseWert"
-        android:layout_marginLeft="110dp"
-        android:layout_marginStart="97dp"
-        android:textColor="#ffffff"
-        android:layout_marginBottom="3dp" />
+        android:text="New Button"
+        android:id="@+id/button"
+        android:background="@drawable/button_erhoehen"
+        android:layout_below="@+id/txtVwRaiseWert"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="30dp" />
 
 </RelativeLayout>
