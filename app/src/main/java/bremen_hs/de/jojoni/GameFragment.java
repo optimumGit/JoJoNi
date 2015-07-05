@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -90,14 +89,17 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     public void setEnabled(boolean enabled){
         Log.d(TAG, "Buttons enabled" + enabled);
         if(!enabled) {
-            raise_button.setVisibility(View.INVISIBLE);
-            fold_button.setVisibility(View.INVISIBLE);
-            call_button.setVisibility(View.INVISIBLE);
+            raise_button.setImageResource(R.drawable.button_erhoehen_deaktiviert);
+            fold_button.setImageResource(R.drawable.button_passen_deaktiviert);
+            call_button.setImageResource(R.drawable.button_mitgehen_deaktiviert);
         } else {
-            raise_button.setVisibility(View.VISIBLE);
-            fold_button.setVisibility(View.VISIBLE);
-            call_button.setVisibility(View.VISIBLE);
+            raise_button.setImageResource(R.drawable.button_erhoehen);
+            fold_button.setImageResource(R.drawable.button_passen);
+            call_button.setImageResource(R.drawable.button_mitgehen);
         }
+        raise_button.setEnabled(enabled);
+        fold_button.setEnabled(enabled);
+        call_button.setEnabled(enabled);
     }
 
     public void setListView(String text){

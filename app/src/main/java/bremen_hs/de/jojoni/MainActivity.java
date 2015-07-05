@@ -39,6 +39,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -202,24 +203,31 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(),2.0f/*set coins*/, RAISE);
+        nextPlayerId = getNextPlayerId();
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
+        gameFragment.setEnabled(isMyTurn());
         //buildRaiseButtonWindow();
         this.gameManager.raise(2.0f);//TODO
     }
 
     @Override
     public void onCallButtonClicked() {
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), 1.0f/*call coins*/, CALL);//
+        nextPlayerId = getNextPlayerId();
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
+        gameFragment.setEnabled(isMyTurn());
         this.gameManager.call(1.0f);//TODO
     }
+
 
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -0.0f;
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), playerOut, FOLD);//
+        nextPlayerId = getNextPlayerId();
+        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
+        gameFragment.setEnabled(isMyTurn());
     }
 
     public void onDoneClicked() {
@@ -351,10 +359,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void startMatch() {
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
-            mParticipants.put(id, p);
-            //playerIds.add(id);
-          //  arrayOfPlayers.add(p);
-
+            //mParticipants.put(id, p);
+            Log.d(TAG, "Player: " + mParticipants.toString());
         }
         nextPlayerId = mMyPersistentId;
         this.dealCards();
@@ -566,6 +572,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
+                Collections.sort(playerIds);
             } else if (cardCounter % 3 == 2){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
                 karte = checkCards(card);
@@ -578,6 +585,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 vw.setImageResource(resID);
             }
             nextPlayerId = turnData.getNextTurnId();
+            gameFragment.setEnabled(isMyTurn());
 
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
@@ -591,7 +599,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-            gameManager.raise(turnData.getPlayerCoins());
+
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
 
@@ -604,6 +612,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
+
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             //gameManager.call(coins);
@@ -616,7 +625,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-            gameManager.call(turnData.getPlayerCoins());
         }
         updateUi();
         cardCounter ++;
@@ -1011,6 +1019,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for(int i = 0; i < li.size(); i++){
             karten[i] = checkCards(li.get(i));
         }
+        Collections.sort(playerIds);
         ImageView vw1 = (ImageView) findViewById(R.id.imgVwSlot1);
         ImageView vw2 = (ImageView) findViewById(R.id.imgVwSlot2);
         ImageView vw3 = (ImageView) findViewById(R.id.imgVwSlot3);
