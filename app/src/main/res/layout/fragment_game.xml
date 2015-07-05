@@ -75,5 +75,54 @@
         android:layout_above="@+id/imgVwSlot1"
         android:layout_marginBottom="15sp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Meine Coins"
+        android:id="@+id/txtVwOwnCoinsLabel"
+        android:gravity="center"
+        android:layout_below="@+id/raise_button"
+        android:layout_toLeftOf="@+id/fold_button"
+        android:layout_marginTop="-10dp"
+        android:layout_alignLeft="@+id/raise_button"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pot"
+        android:id="@+id/txtVwPotLabel"
+        android:gravity="center"
+        android:layout_below="@+id/raise_button"
+        android:layout_toRightOf="@+id/fold_button"
+        android:layout_marginTop="-10dp"
+        android:layout_alignRight="@+id/call_button"
+        android:layout_alignEnd="@+id/call_button"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1000"
+        android:id="@+id/txtVwOwnCoins"
+        android:gravity="center"
+        android:layout_toLeftOf="@+id/fold_button"
+        android:layout_below="@+id/txtVwOwnCoinsLabel"
+        android:layout_alignLeft="@+id/raise_button"
+        android:layout_marginTop="10dp"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0000"
+        android:id="@+id/txtVwPot"
+        android:gravity="center"
+        android:layout_toRightOf="@+id/fold_button"
+        android:layout_alignTop="@+id/txtVwOwnCoins"
+        android:layout_alignRight="@+id/call_button"
+        android:layout_alignEnd="@+id/call_button"
+        android:textColor="#ffffff" />
+
 
 </RelativeLayout>

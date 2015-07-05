@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -587,6 +588,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             updateList(RAISE);
             updateListForActivePlayer();
             gameManager.raise(turnData.getPlayerCoins());
+            synchronizePot();
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
            for(int i = 0; i < playerIds.size(); i++){
@@ -601,9 +603,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             updateList(CALL);
             updateListForActivePlayer();
             gameManager.call(turnData.getPlayerCoins());
+            synchronizePot();
         }
         updateUi();
         cardCounter ++;
+    }
+
+    private void synchronizePot(){
+        TextView vwPot = (TextView) findViewById(R.id.txtVwPot);
+        String text = Float.toString(gameManager.getPotSize());
+        vwPot.setText(text);
     }
 
     public void updateList(String action){
@@ -891,7 +900,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     Toast.makeText(getApplicationContext(), "Bitte geben Sie mindestens den Startbetrag ein!", Toast.LENGTH_LONG).show();
                     raise.setText("");
                 } else if (raiseCoin > mParticipants.get(mMyPersistentId).getPlayerCoins()) {
-                    Toast.makeText(getApplicationContext(), "Sie k�nnen nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Sie k?nnen nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
                     raise.setText("");
                 } else {
                     nextPlayerId = getNextPlayerId();
@@ -901,6 +910,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     sendGameBroadcast(data);
                     gameFragment.setEnabled(isMyTurn());
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
+                    synchronizePot();
                     Window.dismiss();
                 }
             }

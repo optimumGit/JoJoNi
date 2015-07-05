@@ -98,7 +98,7 @@ public class GameManager {
      * @param coins
      */
     public void playerRaise(Player player, float coins){
-        this.pot.playerRais(player, coins);
+        this.pot.playerRaise(player, coins);
     }
     /**
      *

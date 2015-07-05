@@ -28,7 +28,7 @@ public class Pot {
 	 * @param player
 	 * @param coins
 	 */
-	public void playerRais(Player player, float coins){
+	public void playerRaise(Player player, float coins){
 		if(player.setCoinsInGame(coins) != 0) {
 			this.pot =+ coins;
 			this.lastRaise = coins;
