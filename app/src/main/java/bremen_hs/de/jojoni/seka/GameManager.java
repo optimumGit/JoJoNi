@@ -113,8 +113,8 @@ public class GameManager {
      *
      * @param player
      */
-    public void playerCall(Player player){
-		this.pot.playerCall(player);
+    public void playerCall(Player player, float coins){
+		this.pot.playerCall(player, coins);
     }
 
 	public void playerWin(float coins){

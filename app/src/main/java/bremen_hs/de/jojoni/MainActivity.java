@@ -205,14 +205,14 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(),2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
         //buildRaiseButtonWindow();
-        this.gameManager.raise(2.0f);//TODO
+        this.gameManager.playerRais(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
     }
 
     @Override
     public void onCallButtonClicked() {
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
-        this.gameManager.call(1.0f);//TODO
+        this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
     }
 
     @Override
@@ -221,31 +221,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), playerOut, FOLD);//
         this.sendGameBroadcast(data);
     }
-
-    public void onDoneClicked() {
-    // Increment turn number
-        Log.d(TAG, "DoneClicked");
-        mMatchTurnNumber = mMatchTurnNumber + 1;
-        sendReliableMessageToOthers(turnData.persist());
-
-    }
-
-    private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), coins, RAISE));
-    }
-    //TODO wird die methode noch gebraucht? sendGameBroadcast kann benutz werden
-    private void sendReliableMessageToOthers(byte[] data) {
-        Log.d(TAG, "sendRliableMessage");
-        Player me = mParticipants.get(mMyPersistentId);
-        for (Player participant : mParticipants.values()) {
-            if (!participant.equals(me)) {
-                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                        data, mRoom.getRoomId(), participant.getPlayerID());
-            }
-        }
-    }
-
 
     // implementing the mainFragment interface
     @Override
