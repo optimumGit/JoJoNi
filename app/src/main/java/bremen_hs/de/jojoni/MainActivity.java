@@ -213,6 +213,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
+        synchronizeOwnCoins();
+        synchronizePot();
         this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
     }
 
@@ -615,6 +617,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         vwPot.setText(text);
     }
 
+    private void synchronizeOwnCoins(){
+        TextView vwCoins = (TextView) findViewById(R.id.txtVwOwnCoins);
+        String text = Float.toString(mParticipants.get(mMyPersistentId).getPlayerCoins());
+        vwCoins.setText(text);
+    }
+
     public void updateList(String action){
         for(int i = 0; i < arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
@@ -911,6 +919,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     gameFragment.setEnabled(isMyTurn());
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
                     synchronizePot();
+                    synchronizeOwnCoins();
                     Window.dismiss();
                 }
             }
