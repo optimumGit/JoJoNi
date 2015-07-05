@@ -589,7 +589,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-
+            gameManager.raise(turnData.getPlayerCoins());
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
 
@@ -602,7 +602,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             //gameManager.call(coins);

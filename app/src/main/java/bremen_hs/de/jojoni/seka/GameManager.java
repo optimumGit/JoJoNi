@@ -20,7 +20,7 @@ public class GameManager {
 	private CardStack cardStack = null;
 	private Player player = null;
 	private Pot pot = null;
-
+	private float minCall = 50;
 	/**
 	 *
 	 */
@@ -54,6 +54,16 @@ public class GameManager {
 	public void call(float coins){
 		this.pot.call(coins);
 	}
+
+	public float getMinCall(){
+		return  this.minCall;
+	}
+
+	public void setMinCall(float minCall){
+		this.minCall = minCall;
+	}
+
+
 	public void playerJoinGame(Participant participent){
 		if(!this.gameHistory.containsKey(participent.getParticipantId())){
 			this.gameHistory.put(participent.getDisplayName(), "join");
