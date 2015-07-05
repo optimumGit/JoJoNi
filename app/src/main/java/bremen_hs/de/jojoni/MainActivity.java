@@ -205,12 +205,14 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(),2.0f/*set coins*/, RAISE);
         this.sendGameBroadcast(data);
         //buildRaiseButtonWindow();
+        this.gameManager.raise(2.0f);//TODO
     }
 
     @Override
     public void onCallButtonClicked() {
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), 1.0f/*call coins*/, CALL);//
         this.sendGameBroadcast(data);
+        this.gameManager.call(1.0f);//TODO
     }
 
     @Override
@@ -614,6 +616,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
+            gameManager.call(turnData.getPlayerCoins());
         }
         updateUi();
         cardCounter ++;
