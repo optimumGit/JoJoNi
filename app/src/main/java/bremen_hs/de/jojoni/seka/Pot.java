@@ -30,13 +30,13 @@ public class Pot {
 	 */
 	public void playerRaise(Player player, float coins){
 		if(player.setCoinsInGame(coins) != 0) {
-			this.pot =+ coins;
+			this.pot = this.pot + coins;
 			this.lastRaise = coins;
 		}
 	}
 
 	public void raise(float coins){
-		this.pot =+ coins;
+		this.pot = this.pot + coins;
 	}
     /**
      *

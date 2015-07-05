@@ -40,7 +40,6 @@ import com.google.example.games.basegameutils.BaseGameUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import bremen_hs.de.jojoni.seka.Cards;
@@ -1005,7 +1004,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     nextPlayerId = getNextPlayerId();
                     updateListAfterButtonClick(RAISE);
                     updateListForActivePlayer();
-                    byte [] data = turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,2.0f/*set coins*/, RAISE);
+                    byte [] data = turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,raiseCoin/*set coins*/, RAISE);
                     sendGameBroadcast(data);
                     gameFragment.setEnabled(isMyTurn());
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
