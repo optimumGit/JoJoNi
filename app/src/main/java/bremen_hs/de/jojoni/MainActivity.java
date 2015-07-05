@@ -884,7 +884,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
         final EditText raise = (EditText) view.findViewById(R.id.edtTxtRaiseWert);
         final float raiseCoin = Float.valueOf(raise.getText().toString());
-        Window.show();
+        raise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                raise.setText("");
+            }
+        });
         raise.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
