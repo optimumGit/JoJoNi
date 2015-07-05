@@ -71,16 +71,22 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private boolean mResolvingConnectionFailure = false;
     private boolean mAutoStartSignInFlow = true;
+
+    // The game information
     private TurnData turnData = new TurnData();
+
+    // game participants with the id and a Player object
     private HashMap<String, Player> mParticipants = new HashMap<>();
+
+    // ids of all participating Players, used for the turn order
     private ArrayList<String> playerIds = new ArrayList<String>();
+
+    // array of players, used for the listview
     private ArrayList<Player> arrayOfPlayers = new ArrayList<Player>();
+
+    // The game Room instance
     private Room mRoom;
     private AlertDialog mAlertDialog;
-    // The match turn number, monotonically increasing from 0
-    private int mMatchTurnNumber = 0;
-    // It is the player's turn when (match turn number % num participants == my turn index)
-    private int mMyTurnIndex;
 
     private String mMyPersistentId;
 
@@ -90,6 +96,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     private GoogleApiClient apiClient;
 
+    // used to format the listview
     HistoryListAdapter adapter;
 
 
@@ -127,6 +134,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         adapter = new HistoryListAdapter(this, arrayOfPlayers);
         updateUi();
 
+        // check for invitations when starting the app
         if(apiClient.isConnected()) {
             Games.Invitations.registerInvitationListener(apiClient, this);
         }
@@ -159,6 +167,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Games.Invitations.registerInvitationListener(apiClient, this);
 
 
+        // check for invitations
         if (bundle != null) {
             Invitation inv =
                     bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
@@ -185,7 +194,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             return;
         }
 
-        // Launch the sign-in flow if the button was clicked or if auto sign-in is enabled
+        // Launch the sign-in flow if auto sign-in is enabled
         if (mAutoStartSignInFlow) {
             mAutoStartSignInFlow = false;
             mResolvingConnectionFailure = BaseGameUtils.resolveConnectionFailure(this,
@@ -204,16 +213,27 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
+        // open a popup for setting the raise value
         buildRaiseButtonWindow();
     }
 
     @Override
     public void onCallButtonClicked() {
         nextPlayerId = getNextPlayerId();
+
+        // update the list with my own action
         updateListAfterButtonClick(CALL);
+
+        // set the icon of the next player in the list
         updateListForActivePlayer();
+
+        // instantiate the information byte array
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
+
+        // and broadcast the data to the other players
         this.sendGameBroadcast(data);
+
+        // update the buttons
         gameFragment.setEnabled(isMyTurn());
         this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
     }
@@ -221,6 +241,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onFoldButtonClicked() {
         float playerOut = -1.0f;
+
+        // remove the player from the list, so he can't take a turn anymore
         this.playerIds.remove(mMyPersistentId);
         nextPlayerId = getNextPlayerId();
         updateListAfterButtonClick(FOLD);
@@ -230,6 +252,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setEnabled(isMyTurn());
     }
 
+    /**
+     * Updates the player history with the belonging action.
+     *
+     *
+     * @param action which was made
+     */
     private void updateListAfterButtonClick(String action){
         for(int i = 0; i< arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerID().equals(mMyPersistentId)){
@@ -240,6 +268,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.listView.setAdapter(adapter);
     }
 
+    /**
+     * Updates the player history and sets the icon of the acive player
+     */
     private void updateListForActivePlayer(){
         for(int i = 0; i< arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerID().equals(nextPlayerId)){
@@ -263,6 +294,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         onCheckGamesClicked();
     }
 
+    /**
+     *  Opens the google play services invitation inbox view.
+     */
     private void onCheckGamesClicked() {
         Intent intent = Games.Invitations.getInvitationInboxIntent(apiClient);
         startActivityForResult(intent, RC_INVITATION_INBOX);
@@ -271,10 +305,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onShowRulesClicked() {
         getFragmentManager().beginTransaction().replace(R.id.fragment, ruleFragment).commit();
-
     }
 
-    // Instantiate a new TurnBasedMatch - Getting to the Lobby
+    /**
+     * Instantiate a new Realtime Multiplayer - Getting to the Invitation Lobby.
+     */
     private void onStartMatchClicked() {
         int minPlayers = 1;
         int maxPlayers = 4;
@@ -345,6 +380,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
     }
 
+    /**
+     * Player left the room.
+     */
     private void leaveRoom() {
         if (mRoom != null) {
             Games.RealTimeMultiplayer.leave(apiClient, this, mRoom.getRoomId());
@@ -353,16 +391,25 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
     }
 
+    /**
+     * Starting the match. Next Player is the hist
+     */
     private void startMatch() {
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
             mParticipants.put(id, p);
         }
         nextPlayerId = mMyPersistentId;
+        // deal cards to all players
         this.dealCards();
         updateUi();
     }
 
+    /**
+     * Retrieves the next player ID.
+     *
+     * @return the next player ID
+     */
     private String getNextPlayerId(){
         int pos = playerIds.indexOf(mMyPersistentId);
         if(playerIds.size() == pos +1) {
@@ -371,7 +418,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         return playerIds.get(pos + 1);
     }
 
-
+    /**
+     * Check whether my id is the next Players Id
+     *
+     * @return is my turn
+     */
     private boolean isMyTurn() {
         if(nextPlayerId.equals(mMyPersistentId)){
             return true;
@@ -380,7 +431,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
 
-
+    /**
+     * Updating the App Fragments
+     */
     private void updateUi() {
         if(mRoom == null){
             Log.d(TAG, "room null");
@@ -396,18 +449,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         } else if(mRoom.getStatus() == Room.ROOM_STATUS_INVITING){
             Log.d(TAG, "Room inviting");
             showWaitingRoom(mRoom);
-        } else if(mRoom == null && !mainFragment.isVisible()){
+        } else if(mRoom == null && !mainFragment.isVisible()) {
             Log.d(TAG, "room null");
             getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
-        } else {
-            //getFragmentManager().beginTransaction().replace(R.id.fragment, mainFragment).commit();
         }
     }
 
 
-
     /**
-     * RTMP Participant joined, register the DrawingParticipant if the Participant is connected.
+     * RTMP Participant joined, register the Player if the Participant is connected.
+     *
      * @param p the Participant from the Real-Time Multiplayer match.
      */
     private void onParticipantConnected(Participant p) {
@@ -417,9 +468,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     /**
-     * Add a DrawingParticipant to the ongoing game and update turn order. If the
-     * DrawingParticipant is a duplicate, this method does nothing.
-     * @param dp the DrawingParticipant to add.
+     * Add a Player to the ongoing game and update turn order. If the
+     * Player is a duplicate, this method does nothing.
+     * @param dp the Player to add.
      */
     private void onParticipantConnected(Player dp) {
         Log.d(TAG, "onParticipantConnected: " + dp.getPlayerID());
@@ -431,10 +482,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             arrayOfPlayers.add(dp);
             playerIds.add(dp.getPlayerID());
         }
-        //updateUi();
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -463,16 +511,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         final String inviterName = invitation.getInviter().getDisplayName();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this)
-                .setTitle("Invitation")
-                .setMessage("Would you like to play a new game with " + inviterName + "?")
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setTitle("Einladung")
+                .setMessage("Möchtest du Seka mit " + inviterName + " spielen?")
+                .setNegativeButton("Nein", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Games.RealTimeMultiplayer.declineInvitation(apiClient,
                                 invitation.getInvitationId());
                     }
                 })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Ja", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         acceptInvitation(invitation);
@@ -483,6 +531,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         mAlertDialog.show();
     }
 
+    /**
+     * Accept the invitation and build RoomConfig with the right settings. Join the game.
+     */
     private void acceptInvitation(Invitation invitation) {
         arrayOfPlayers.clear();
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
@@ -504,8 +555,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Toast.makeText(this, "The invitation was removed.", Toast.LENGTH_SHORT).show();
     }
 
-
-
     @Override
     public void onRoomCreated(int statusCode, Room room) {
         Log.d(TAG, "onRoomCreated: " + statusCode + ":" + room);
@@ -514,9 +563,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             Toast.makeText(this, "Error creating room.", Toast.LENGTH_SHORT).show();
             return;
         }
+        // show waiting room until all players joined
         showWaitingRoom(room);
     }
 
+    /**
+     * Google Play Services Waiting Room.
+     *
+     * @param room the belonging game room
+     */
     private void showWaitingRoom(Room room) {
         // Require all players to join before starting
         final int MIN_PLAYERS = Integer.MAX_VALUE;
@@ -556,10 +611,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         onMessageReceived(data);
     }
 
+    /**
+     * Receiving a RealtimeMessage and process the data. Unpersisting the bytearray to JSON Objects and differ the actions.
+     *
+     * @param data bytearray
+     */
     private void onMessageReceived(byte[] data) {
         turnData = turnData.unpersist(data);
         String karte;
 
+        // deal the cards
         if(turnData.getAction().equals(NEW_CARD)){
             Cards card = new Cards(turnData.getCardType(), turnData.getCardCount());
             gameManager.setCardToPlayer(card);
@@ -585,12 +646,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
 
+            // Raise action
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
             updateList(RAISE);
             updateListForActivePlayer();
             gameManager.raise(turnData.getPlayerCoins());
             synchronizePot();
+
+            // fold action
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
            for(int i = 0; i < playerIds.size(); i++){
@@ -600,6 +664,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
            }
             updateList(FOLD);
             updateListForActivePlayer();
+
+            // call action
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             updateList(CALL);
@@ -620,18 +686,31 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         vwPot.setText(text);
     }
 
+    /**
+     * updating the player history with the action when a message was received
+     *
+     * @param action to set
+     */
     public void updateList(String action){
         for(int i = 0; i < arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
                 arrayOfPlayers.get(i).setAction(action);
             }
         }
+        // set the next player
         nextPlayerId = turnData.getNextTurnId();
         adapter.notifyDataSetChanged();
         gameFragment.listView.setAdapter(adapter);
+        // update the buttons
         gameFragment.setEnabled(isMyTurn());
     }
 
+    /**
+     * Checks which card should be displayed
+     *
+     * @param card the card object to be displayed
+     * @return the belonging string to the card
+     */
     public String checkCards(Cards card){
 
         Cards ca = card;
@@ -774,7 +853,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
 
-
     @Override
     public void onRealTimeMessageSent(int statusCode, int tokenId, String participantId) {
         Log.d(TAG, "onRealTimeMessageSent: " + statusCode + ":" + participantId);
@@ -848,6 +926,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         }
     }
 
+    /**
+     * Player left the room and the game. Updating the lists and the playerIDs for the turn order.
+     *
+     * @param messagingId
+     * @param persistentId
+     */
     private void onParticipantDisconnected(String messagingId, String persistentId) {
             Log.d(TAG, "onParticipantDisconnected:" + messagingId);
             Player dp = mParticipants.remove(persistentId);
@@ -878,6 +962,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         Log.d(TAG, "onP2PDisconnected: " + s);
     }
 
+    /**
+     * The raise Button Popup. The player can type a raise value.
+     */
     private void buildRaiseButtonWindow() {
 
         AlertDialog.Builder raiseWindowBuilder = new AlertDialog.Builder(this);
@@ -999,6 +1086,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
     //+++++++++++++++++++++ game ++++++++++++++++++++++
 
+    /**
+     * Deal the cards to all participants.
+     *
+     * @return
+     */
     public byte[] dealCards(){
         List<Cards> stack = gameManager.getStack();
 
@@ -1028,6 +1120,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         return null;
     }
 
+    /**
+     * deal the cards to the host, because the sender can't get a reliable message.
+     */
     public void hostCardDeal(){
         String[] karten = new String[3];
         List<Cards> li = gameManager.getPlayerHand();
@@ -1048,6 +1143,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         vw3.setImageResource(Id3);
     }
 
+    /**
+     * Broadcast the turn information to all players.
+     *
+     * @param data the information to be send.
+     */
     private void sendGameBroadcast(byte[] data){
         for (Player participant : mParticipants.values()) {
             if (!participant.getPlayerID().equals(mMyPersistentId)) {
@@ -1059,6 +1159,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         //TODO listen eintrag
     }
 
+    /**
+     * finishing the game
+     */
     private void gameFinished(){
         int call   = 0;
         int raise  = 0;
