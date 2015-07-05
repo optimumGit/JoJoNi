@@ -222,7 +222,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
     @Override
     public void onFoldButtonClicked() {
-        float playerOut = -0.0f;
+        float playerOut = -1.0f;
         nextPlayerId = getNextPlayerId();
         byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
@@ -568,6 +568,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
             updateList(FOLD);
+           for(int i = 0; i < playerIds.size(); i++){
+               if(playerIds.get(i).equals(turnData.getPlayerId())){
+                   playerIds.remove(i);
+               }
+           }
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
             updateList(CALL);
