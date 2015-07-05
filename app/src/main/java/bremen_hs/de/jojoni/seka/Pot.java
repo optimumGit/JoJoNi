@@ -64,9 +64,8 @@ public class Pot {
      *
      * @param player
      */
-    public void playerCall(Player player){
-		float coins = player.setCoinsInGame(this.lastRaise);
-		if(coins != 0) {
+    public void playerCall(Player player, float coins){
+		if(player.setCoinsInGame(coins) != 0) {
 			this.pot =+ coins;
 			this.writeToHistory(player, coins);
 		}

@@ -208,7 +208,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
         //buildRaiseButtonWindow();
-        this.gameManager.raise(2.0f);//TODO
+        this.gameManager.playerRais(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
     }
 
     @Override
@@ -218,8 +218,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
         this.gameManager.call(1.0f);//TODO
+        this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
     }
-
 
     @Override
     public void onFoldButtonClicked() {
@@ -229,31 +229,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
     }
-
-    public void onDoneClicked() {
-    // Increment turn number
-        Log.d(TAG, "DoneClicked");
-        mMatchTurnNumber = mMatchTurnNumber + 1;
-        sendReliableMessageToOthers(turnData.persist());
-
-    }
-
-    private void onRaisebuttonClicked(float coins){
-        sendReliableMessageToOthers(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), getNextPlayerId(), coins, RAISE));
-    }
-    //TODO wird die methode noch gebraucht? sendGameBroadcast kann benutz werden
-    private void sendReliableMessageToOthers(byte[] data) {
-        Log.d(TAG, "sendRliableMessage");
-        Player me = mParticipants.get(mMyPersistentId);
-        for (Player participant : mParticipants.values()) {
-            if (!participant.equals(me)) {
-                Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
-                Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
-                        data, mRoom.getRoomId(), participant.getPlayerID());
-            }
-        }
-    }
-
 
     // implementing the mainFragment interface
     @Override
@@ -359,8 +334,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     private void startMatch() {
         for(String id : mRoom.getParticipantIds()){
             Player p = new Player(mRoom.getParticipant(id));
-            //mParticipants.put(id, p);
-            Log.d(TAG, "Player: " + mParticipants.toString());
+            mParticipants.put(id, p);
+            //playerIds.add(id);
+          //  arrayOfPlayers.add(p);
+
         }
         nextPlayerId = mMyPersistentId;
         this.dealCards();
@@ -572,7 +549,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 karte = checkCards(card);
                 int resID = getResources().getIdentifier(karte, "drawable", getPackageName());
                 vw.setImageResource(resID);
-                Collections.sort(playerIds);
             } else if (cardCounter % 3 == 2){
                 ImageView vw = (ImageView) findViewById(R.id.imgVwSlot2);
                 karte = checkCards(card);
@@ -585,7 +561,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 vw.setImageResource(resID);
             }
             nextPlayerId = turnData.getNextTurnId();
-            gameFragment.setEnabled(isMyTurn());
 
         } else if(turnData.getAction().equals(RAISE)) {
             Log.d(TAG, "Message received " + RAISE);
@@ -599,11 +574,11 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-
+            gameManager.raise(turnData.getPlayerCoins());
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
 
-            for(int i = 0; i < arrayOfPlayers.size(); i++){
+            for(int i = 0; i < arrayOfPlayers.size(); i++){//TODO die for-schleife in eine methode auslagern
                 if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
                     arrayOfPlayers.get(i).setAction(FOLD);
                 }
@@ -612,10 +587,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
-
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
-            //gameManager.call(coins);
             for(int i = 0; i < arrayOfPlayers.size(); i++){
                 if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
                     arrayOfPlayers.get(i).setAction(CALL);
@@ -625,6 +598,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             adapter.notifyDataSetChanged();
             gameFragment.listView.setAdapter(adapter);
             gameFragment.setEnabled(isMyTurn());
+            gameManager.call(turnData.getPlayerCoins());
         }
         updateUi();
         cardCounter ++;
@@ -1019,7 +993,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         for(int i = 0; i < li.size(); i++){
             karten[i] = checkCards(li.get(i));
         }
-        Collections.sort(playerIds);
         ImageView vw1 = (ImageView) findViewById(R.id.imgVwSlot1);
         ImageView vw2 = (ImageView) findViewById(R.id.imgVwSlot2);
         ImageView vw3 = (ImageView) findViewById(R.id.imgVwSlot3);
