@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -203,14 +201,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
-        nextPlayerId = getNextPlayerId();
-        updateListAfterButtonClick(RAISE);
-        updateListForActivePlayer();
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,2.0f/*set coins*/, RAISE);
-        this.sendGameBroadcast(data);
-        gameFragment.setEnabled(isMyTurn());
         buildRaiseButtonWindow();
-        this.gameManager.playerRaise(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
     }
 
     @Override
@@ -301,7 +292,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                 // canceled
                 return;
             }
-
             // get the selected invitation
             Bundle extras = data.getExtras();
             Invitation invitation = extras.getParcelable(Multiplayer.EXTRA_INVITATION);
@@ -491,6 +481,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     }
 
     private void acceptInvitation(Invitation invitation) {
+        arrayOfPlayers.clear();
         RoomConfig.Builder roomConfigBuilder = RoomConfig.builder(this)
                 .setMessageReceivedListener(this)
                 .setRoomStatusUpdateListener(this)
@@ -884,38 +875,36 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         final AlertDialog Window = raiseWindowBuilder.create();
 
         final EditText raise = (EditText) view.findViewById(R.id.edtTxtRaiseWert);
-        final float raiseCoin = Float.valueOf(raise.getText().toString());
         raise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 raise.setText("");
             }
         });
-        raise.addTextChangedListener(new TextWatcher() {
+        final ImageButton button = (ImageButton) view.findViewById(R.id.raise_button_popup);
+        button.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (raiseCoin < gameManager.getMinCall()){
+            public void onClick(View v) {
+                final float raiseCoin = Float.valueOf(raise.getText().toString());
+                if (raiseCoin < gameManager.getMinCall()) {
                     Toast.makeText(getApplicationContext(), "Bitte geben Sie mindestens den Startbetrag ein!", Toast.LENGTH_LONG).show();
                     raise.setText("0000");
-                } else if (raiseCoin > mParticipants.get(mMyPersistentId).getPlayerCoins()){
+                } else if (raiseCoin > mParticipants.get(mMyPersistentId).getPlayerCoins()) {
                     Toast.makeText(getApplicationContext(), "Sie k�nnen nur so viel einsetzen, wie Sie besitzen!", Toast.LENGTH_LONG).show();
                     raise.setText("0000");
                 } else {
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
+                    nextPlayerId = getNextPlayerId();
+                    updateListAfterButtonClick(RAISE);
+                    updateListForActivePlayer();
+                    byte [] data = turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,2.0f/*set coins*/, RAISE);
+                    sendGameBroadcast(data);
+                    gameFragment.setEnabled(isMyTurn());
+                    gameManager.playerRaise(mParticipants.get(mMyPersistentId), 1.1f/*TODO coins holen*/);
+                    Window.dismiss();
                 }
             }
         });
-
         Window.show();
 
     }
