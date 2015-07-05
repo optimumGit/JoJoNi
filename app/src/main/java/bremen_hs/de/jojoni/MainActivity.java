@@ -570,7 +570,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         } else if(turnData.getAction().equals((FOLD))) {
             Log.d(TAG, "Message received " + FOLD);
 
-            for(int i = 0; i < arrayOfPlayers.size(); i++){
+            for(int i = 0; i < arrayOfPlayers.size(); i++){//TODO die for-schleife in eine methode auslagern
                 if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
                     arrayOfPlayers.get(i).setAction(FOLD);
                 }
@@ -581,7 +581,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             gameFragment.setEnabled(isMyTurn());
         } else if(turnData.getAction().equals((CALL))) {
             Log.d(TAG, "Message received " + CALL);
-            //gameManager.call(coins);
             for(int i = 0; i < arrayOfPlayers.size(); i++){
                 if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
                     arrayOfPlayers.get(i).setAction(CALL);
