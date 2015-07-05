@@ -12,6 +12,7 @@ public class Pot {
 	
 	
 	public Pot(){}
+
 	
 	/**
 	 * 
@@ -59,5 +60,4 @@ public class Pot {
 	public void call(float coins){
 		this.pot =+ coins;
 	}
-
 }
