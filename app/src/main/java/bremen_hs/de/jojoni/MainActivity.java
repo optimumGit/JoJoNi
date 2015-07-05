@@ -688,17 +688,16 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         vwPot.setText(text);
     }
 
-    /**
-     * updating the player history with the action when a message was received
-     *
-     * @param action to set
-     */
     private void synchronizeOwnCoins(){
         TextView vwCoins = (TextView) findViewById(R.id.txtVwOwnCoins);
         String text = Float.toString(mParticipants.get(mMyPersistentId).getPlayerCoins());
         vwCoins.setText(text);
     }
-
+    /**
+     * updating the player history with the action when a message was received
+     *
+     * @param action to set
+     */
     public void updateList(String action){
         for(int i = 0; i < arrayOfPlayers.size(); i++){
             if(arrayOfPlayers.get(i).getPlayerName().equals(turnData.getPlayerName())){
