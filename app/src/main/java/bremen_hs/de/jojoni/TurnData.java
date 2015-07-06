@@ -6,34 +6,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import bremen_hs.de.jojoni.seka.Player;
 
 /**
- * Created by johan_000 on 02.06.2015.
+ *  The TurnData class for persisting and unpersisting the game data
  */
 public class TurnData {
 
-    private final String TAG     = "TurnData";
-    private String playerName    = null;
-    private String playerId      = null;
-    private String playerAction  = null;
+    private final String TAG = "TurnData";
+    private String playerName = null;
+    private String playerId = null;
     private String broadcastAction = null;
-    private String isNewCard     = null;
     private String action = null;
     private String nextTurnId = null;
     private float playerSetCoins = 0.0f;
-    private int cardType;//new Integer(null);
-    private int cardCount;//new Integer(null);
-    private int turn;//new Integer(null);
+    private int cardType;
+    private int cardCount;
 
 
-
+    // default constructor
     public TurnData(){
 
     }
 
+    // getter & setter
     public String getPlayerId(){
         return this.playerId;
     }
@@ -70,32 +67,18 @@ public class TurnData {
         return this.playerSetCoins;
     }
 
-    /**
-     *
-     * @return
-     */
-    public byte[] persist(){
-        JSONObject json = new JSONObject();
-        try {
-            json.put("player name",      playerName);
-            json.put("player action",    playerAction);
-            json.put("player set coins", playerSetCoins);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public String getData() {
+        return playerName;
+    }
 
-        String st = json.toString();
-
-        Log.d(TAG, "==== PERSISTING\n" + st);
-
-        return st.getBytes(Charset.forName("UTF-8"));
+    public void setData(String data) {
+        this.playerName = data;
     }
 
     /**
-     *
-     * @param data
-     * @return
+     * Unpersists the byte array to a JSON Object and instantiate a new {@link TurnData} Object which is returned
+     * @param data which was received
+     * @return a TurnData Object with the received information
      */
     public TurnData unpersist(byte[] data){
         if (data == null) {
@@ -103,7 +86,7 @@ public class TurnData {
             return new TurnData();
         }
 
-        String st = null;
+        String st;
         try {
             st = new String(data, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
@@ -115,58 +98,59 @@ public class TurnData {
 
         TurnData turnData = new TurnData();
 
-
         try {
             JSONObject obj = new JSONObject(st);
             if(obj.has("action")){
+                // deal cards
                 if(obj.get("action").equals("newCard")) {
-                    turnData.isNewCard = obj.getString("new card");
                     turnData.cardCount = obj.getInt("card count");
                     turnData.cardType = obj.getInt("card type");
-                    String action = obj.getString("action");
                     turnData.nextTurnId = obj.getString("next turn");
-                    turnData.setAction(action);
+                    turnData.setAction(obj.getString("action"));
                     return turnData;
             } else if(obj.get("action").equals("raise")){
-                    turnData.broadcastAction = obj.getString("action");
-                    turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
-                    turnData.playerName      = obj.getString("player name");
-                    turnData.playerId        = obj.getString("player id");
-                    turnData.nextTurnId = obj.getString("next turn");
-                    turnData.setAction(obj.getString("action"));
-                    return turnData;
+                    return getTurnData(turnData, obj);
                 }else if(obj.get("action").equals("call")){
-                    turnData.broadcastAction = obj.getString("action");
-                    turnData.playerSetCoins  = Float.parseFloat(obj.getString("coins"));
-                    turnData.playerName      = obj.getString("player name");
-                    turnData.playerId        = obj.getString("player id");
-                    turnData.nextTurnId = obj.getString("next turn");
-                    turnData.setAction(obj.getString("action"));
-                    return turnData;
+                    return getTurnData(turnData, obj);
                 }else if(obj.get("action").equals("fold")){
-                    turnData.broadcastAction = obj.getString("action");
-                    turnData.playerName      = obj.getString("player name");
-                    turnData.playerId        = obj.getString("player id");
-                    turnData.nextTurnId = obj.getString("next turn");
-                    turnData.setAction(obj.getString("action"));
-                    return turnData;
+                    return getTurnData(turnData, obj);
                 }
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return turnData;
     }
 
     /**
-     *
-     * @param cardType
-     * @param cardCount
-     * @param rounds
-     * @return
+     * Getting the {@link TurnData} for the three turn actions
+     * @param turnData
+     * @param obj the JSONObject
+     * @return the turnData
+     * @throws JSONException
      */
-    public byte[] CardJson(int cardType, int cardCount, int rounds, String playerid){
+    private TurnData getTurnData(TurnData turnData, JSONObject obj) throws JSONException {
+        turnData.broadcastAction = obj.getString("action");
+        if(obj.has("coins")) {
+            turnData.playerSetCoins = Float.parseFloat(obj.getString("coins"));
+        }
+        turnData.playerName = obj.getString("player name");
+        turnData.playerId = obj.getString("player id");
+        turnData.nextTurnId = obj.getString("next turn");
+        turnData.setAction(obj.getString("action"));
+        return turnData;
+    }
+
+    /**
+     * Getting the byte array for dealing the cards.
+     *
+     * @param cardType as integer 0=karo; 1=herz; 2=kreuz; 3=pik;
+     * @param cardCount as integer 0=6; 1=7; 2=8; 3=9; 4=10; 5=bube; 6=dame; 7=king; 8=As
+     * @param rounds as integer for the number of the dealt card
+     * @return the data as a byte array
+     */
+    public byte[] cardJson
+    (int cardType, int cardCount, int rounds, String playerid){
         String newCard = new String("newCard");
         JSONObject cardJSON = new JSONObject();
         try {
@@ -182,13 +166,15 @@ public class TurnData {
     }
 
     /**
+     * Creating the {@link JSONObject} and build the byte array with the information which should be sent.
      *
-     * @param name
-     * @param coins
-     * @param action
-     * @return
+     * @param player the player name who made the turn
+     * @param nextParticitpantId the next player
+     * @param coins the set value
+     * @param action which action the player made (raise, call, fold)
+     * @return the data as a byte array
      */
-    public byte[] receiveGameBroadcast(Player player, String nextParticitpantId, float coins, String action){
+    public byte[] sendGameBroadcast(Player player, String nextParticitpantId, float coins, String action){
         JSONObject cardJSON = new JSONObject();
         try {
             cardJSON.put("player name", player.getPlayerName());
@@ -206,20 +192,4 @@ public class TurnData {
         return cardJSON.toString().getBytes();
     }
 
-
-    public String getData() {
-        return playerName;
-    }
-
-    public void setData(String data) {
-        this.playerName = data;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
 }

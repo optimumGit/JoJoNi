@@ -227,7 +227,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         updateListForActivePlayer();
 
         // instantiate the information byte array
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
+        byte [] data = this.turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
 
         // and broadcast the data to the other players
         this.sendGameBroadcast(data);
@@ -248,7 +248,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         nextPlayerId = getNextPlayerId();
         updateListAfterButtonClick(FOLD);
         updateListForActivePlayer();
-        byte [] data = this.turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
+        byte [] data = this.turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
         this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
     }
@@ -1005,7 +1005,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     nextPlayerId = getNextPlayerId();
                     updateListAfterButtonClick(RAISE);
                     updateListForActivePlayer();
-                    byte [] data = turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId,raiseCoin/*set coins*/, RAISE);
+                    byte [] data = turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, raiseCoin/*set coins*/, RAISE);
                     sendGameBroadcast(data);
                     gameFragment.setEnabled(isMyTurn());
                     gameManager.playerRaise(mParticipants.get(mMyPersistentId), raiseCoin);
@@ -1111,7 +1111,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
 
             for (Player participant : mParticipants.values()) {
                 if (!participant.getPlayerID().equals(mMyPersistentId)) {
-                    byte[] data = turnData.CardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds, mMyPersistentId);
+                    byte[] data = turnData.cardJson(stack.get(cards).getCardTyp(), stack.get(cards).getCardCount(), rounds, mMyPersistentId);
                     Log.d(TAG, "reliablemessage to:" + participant.getPlayerName() + participant.getPlayerID());
                     Games.RealTimeMultiplayer.sendReliableMessage(apiClient, null,
                            data , mRoom.getRoomId(), participant.getPlayerID());
@@ -1185,7 +1185,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         if(call == player){
             float result = gameManager.getCardsResult(mParticipants.get(mMyPersistentId).getHand());
             mParticipants.get(mMyPersistentId).setHandResult(result);
-            this.sendGameBroadcast(turnData.receiveGameBroadcast(mParticipants.get(mMyPersistentId), null, result, RESULT));
+            this.sendGameBroadcast(turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), null, result, RESULT));
             //todo call game over method and put result in own list
         }else if(player == raise){
             //todo call game over method
