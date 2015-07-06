@@ -585,6 +585,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
         Log.d(TAG, "onJoinedRoom: " + statusCode + ":" + room);
+        showWaitingRoom(room);
     }
 
 
