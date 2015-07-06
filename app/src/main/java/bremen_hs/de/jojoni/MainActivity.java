@@ -165,7 +165,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameManager.playerJoinGame(playerName, playerID);
         Games.Invitations.registerInvitationListener(apiClient, this);
 
-
+        findViewById(R.id.btnCreateGame).setEnabled(true);
         // check for invitations
         if (bundle != null) {
             Invitation inv =
@@ -201,14 +201,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                     getString(R.string.signin_other_error));
         }
     }
-
-
-    @Override
-    public void onFinishedTurn() {
-
-    }
-
-
     // implementing the GameFragment interface
     @Override
     public void onRaiseButtonClicked() {
@@ -585,7 +577,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     @Override
     public void onJoinedRoom(int statusCode, Room room) {
         Log.d(TAG, "onJoinedRoom: " + statusCode + ":" + room);
-        showWaitingRoom(room);
     }
 
 

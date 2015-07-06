@@ -27,7 +27,8 @@
         android:layout_above="@+id/btnJoinGame"
         android:layout_alignLeft="@+id/btnShowRules"
         android:layout_alignStart="@+id/btnShowRules"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="20dp"
+        android:clickable="false" />
 
     <ImageButton
         android:layout_width="wrap_content"

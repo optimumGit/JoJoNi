@@ -67,12 +67,9 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-
     @Override
     public void onClick(View view) {
 
-        // TODO implement methods
         switch(view.getId()){
             case R.id.raise_button:
                 gameListener.onRaiseButtonClicked();
@@ -102,14 +99,8 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         call_button.setEnabled(enabled);
     }
 
-    public void setListView(String text){
-
-
-    }
-
     // The functions for the three buttons, implemented by the MainActivity
     public interface GameListener{
-        void onFinishedTurn();
         void onRaiseButtonClicked();
         void onCallButtonClicked();
         void onFoldButtonClicked();

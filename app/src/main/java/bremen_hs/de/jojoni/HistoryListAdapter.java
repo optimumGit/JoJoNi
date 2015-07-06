@@ -28,7 +28,6 @@ public class HistoryListAdapter extends ArrayAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.playerhistory_list, parent, false);
         }
-        // Lookup view for data population
         TextView tvName = (TextView) convertView.findViewById(R.id.playerName);
         TextView tvHome = (TextView) convertView.findViewById(R.id.action);
         ImageView imageView = (ImageView) convertView.findViewById(R.id.playerIcon);

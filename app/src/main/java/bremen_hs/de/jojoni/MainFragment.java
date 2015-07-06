@@ -23,6 +23,7 @@ public class MainFragment extends Fragment implements View.OnClickListener{
         for (int i : BUTTONS) {
             v.findViewById(i).setOnClickListener(this);
         }
+        v.findViewById(R.id.btnCreateGame).setEnabled(true);
         return v;
     }
 
@@ -46,6 +47,7 @@ public class MainFragment extends Fragment implements View.OnClickListener{
 
     }
 
+    // Listener for interaction from the mainAcitivty
     public interface MainListener{
         void onCreateGameClicked();
         void onJoinGameClicked();
