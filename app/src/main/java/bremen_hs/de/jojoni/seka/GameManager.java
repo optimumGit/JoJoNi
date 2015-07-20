@@ -1,5 +1,7 @@
 package bremen_hs.de.jojoni.seka;
 
+import android.util.Log;
+
 import com.google.android.gms.games.multiplayer.Participant;
 
 import java.util.Collections;
@@ -139,6 +141,34 @@ public class GameManager {
 		List<Cards> stack = this.cardStack.getStack();
 		Collections.shuffle(stack);
 		return stack;
+	}
+
+	public boolean gameOver(HashMap<String, Player> mParticipants){
+		boolean gameOver = true;
+		int lastPlayer   = 1;
+		int players = mParticipants.size();
+		int raise   = 0;
+		int call    = 0;
+		int fold    = 0;
+
+		for (Player participant : mParticipants.values()) {
+			if (participant.getAction().equals("call")) {
+				call++;
+			}else if(participant.getAction().equals("raise")){
+				raise++;
+			}else if(participant.getAction().equals("fold")){
+				fold++;
+			}
+		}
+
+		int playerImGame = players - fold;
+
+		if(playerImGame == call){
+			return gameOver;
+		}else if(raise == 1 && fold == players - 1){//todo
+			return gameOver;
+		}
+		return false;
 	}
 	
 /*

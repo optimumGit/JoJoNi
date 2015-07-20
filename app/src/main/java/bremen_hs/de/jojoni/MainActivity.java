@@ -206,6 +206,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
     public void onRaiseButtonClicked() {
         // open a popup for setting the raise value
         buildRaiseButtonWindow();
+
+        mParticipants.get(mMyPersistentId).setAction(RAISE);
+        boolean gameOver = this.gameManager.gameOver(mParticipants);
+        if(gameOver){
+            Toast.makeText(this, " GAME OVER", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Own Hand Result: " +gameManager.getCardsResult(gameManager.getPlayerHand()), Toast.LENGTH_SHORT).show();
+
+            leaveRoom();//TODO runde neustarten ohne das spiel zu beenden
+        }
     }
 
     @Override
@@ -219,7 +228,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         updateListForActivePlayer();
 
         // instantiate the information byte array
-        byte [] data = this.turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*call coins*/, CALL);//
+        byte [] data = this.turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, 1.0f/*todo call coins*/, CALL);//
 
         // and broadcast the data to the other players
         this.sendGameBroadcast(data);
@@ -228,7 +237,20 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         gameFragment.setEnabled(isMyTurn());
         synchronizeOwnCoins();
         synchronizePot();
-        this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.1f/*todo coins holen*/);
+        mParticipants.get(mMyPersistentId).setAction(CALL);
+
+        //float lastPlayerSetCoins = arrayOfPlayers.get(1).
+
+        this.gameManager.playerCall(mParticipants.get(mMyPersistentId), 1.0f/*todo coins holen*/);
+
+
+        boolean gameOver = this.gameManager.gameOver(mParticipants);
+        if(gameOver){
+            Toast.makeText(this, " GAME OVER", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Own Hand Result: " + gameManager.getCardsResult(gameManager.getPlayerHand()), Toast.LENGTH_SHORT).show();
+            leaveRoom();
+        }
+
     }
 
     @Override
@@ -241,8 +263,18 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
         updateListAfterButtonClick(FOLD);
         updateListForActivePlayer();
         byte [] data = this.turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), nextPlayerId, playerOut, FOLD);//
-        this.sendGameBroadcast(data);
         gameFragment.setEnabled(isMyTurn());
+        this.sendGameBroadcast(data);
+        mParticipants.get(mMyPersistentId).setAction(FOLD);
+
+
+
+        boolean gameOver = this.gameManager.gameOver(mParticipants);
+        if(gameOver){
+            Toast.makeText(this, " GAME OVER", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Own Hand Result: " + gameManager.getCardsResult(gameManager.getPlayerHand()), Toast.LENGTH_SHORT).show();
+            leaveRoom();
+        }
     }
 
     /**
@@ -655,6 +687,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
                    playerIds.remove(i);
                }
            }
+
             updateList(FOLD);
             updateListForActivePlayer();
 
@@ -666,9 +699,19 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             gameManager.call(turnData.getPlayerCoins());
             synchronizePot();
         }
-        if(playerIds.size() == 1){
-            this.gameFinished();
+        if(!turnData.getAction().equals("newCard")) {
+            mParticipants.get(turnData.getPlayerId()).setAction(turnData.getAction());
+            Log.d(TAG, "Player Action: " + mParticipants.get(turnData.getPlayerId()).getAction());
         }
+        boolean gameOver = gameManager.gameOver(mParticipants);
+
+        if(gameOver){
+            Toast.makeText(this, " GAME OVER", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Own Hand Result: " +gameManager.getCardsResult(gameManager.getPlayerHand()), Toast.LENGTH_SHORT).show();
+
+            leaveRoom();//TODO runde neustarten ohne das spiel zu beenden
+        }
+
         updateUi();
         cardCounter ++;
     }
@@ -1178,8 +1221,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainL
             mParticipants.get(mMyPersistentId).setHandResult(result);
             this.sendGameBroadcast(turnData.sendGameBroadcast(mParticipants.get(mMyPersistentId), null, result, RESULT));
             //todo call game over method and put result in own list
+            Log.d(TAG, "GAME OVER:" + "all player call");
         }else if(player == raise){
             //todo call game over method
+            Log.d(TAG, "GAME OVER:" + "all player fold");
         }
     }
 }

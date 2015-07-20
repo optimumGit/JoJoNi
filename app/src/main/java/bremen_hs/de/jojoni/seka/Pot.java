@@ -53,7 +53,8 @@ public class Pot {
      */
     public void playerCall(Player player, float coins){
 		if(player.setCoinsInGame(coins) != 0) {
-			this.pot =+ coins;
+			this.pot = this.pot + coins;
+
 		}
     }
 
